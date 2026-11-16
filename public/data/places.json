@@ -1,0 +1,12 @@
+{
+  "note": "Jump-to locations. Resort entries are provisional approximate base-area coordinates and get verified against official sources in Phase 2.",
+  "places": [
+    { "id": "mountain", "name": "Whole mountain", "lat": 45.3736, "lon": -121.6958, "elevM": 3429, "viewDist": 22000, "verified": true },
+    { "id": "summit", "name": "Summit", "lat": 45.3736, "lon": -121.6958, "elevM": 3429, "viewDist": 3500, "verified": true },
+    { "id": "timberline", "name": "Timberline", "lat": 45.3311, "lon": -121.7110, "elevM": 1817, "viewDist": 3500, "verified": false },
+    { "id": "meadows", "name": "Mt. Hood Meadows", "lat": 45.3316, "lon": -121.6650, "elevM": 1640, "viewDist": 4500, "verified": false },
+    { "id": "skibowl", "name": "Mt. Hood Skibowl", "lat": 45.3020, "lon": -121.7730, "elevM": 1100, "viewDist": 3500, "verified": false },
+    { "id": "summitpass", "name": "Summit Pass", "lat": 45.3040, "lon": -121.7480, "elevM": 1220, "viewDist": 2000, "verified": false },
+    { "id": "cooperspur", "name": "Cooper Spur", "lat": 45.4270, "lon": -121.6130, "elevM": 1220, "viewDist": 2500, "verified": false }
+  ]
+}

@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mt Hood Digital Twin</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; background: #9db7d6; }
+      body { font: 13px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: #eef3f8; }
+      canvas { display: block; touch-action: none; }
+      .panel {
+        position: fixed; background: rgba(16, 24, 34, 0.62); backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 10px; padding: 10px 12px;
+      }
+      #top { top: 12px; left: 12px; width: 232px; }
+      #top h1 { font-size: 14px; margin: 0 0 8px; letter-spacing: 0.02em; }
+      label { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; color: #c4d0dc; }
+      select, input[type="range"] { width: 136px; }
+      select { background: #1c2a3a; color: #eef3f8; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 3px 4px; font: inherit; }
+      #read { bottom: 12px; left: 12px; font-variant-numeric: tabular-nums; }
+      #read div { white-space: nowrap; }
+      #read span.k { color: #a9b8c7; display: inline-block; width: 92px; }
+      #status { color: #ffd98a; }
+      #status:empty { display: none; }
+      #help { color: #a9b8c7; margin-top: 8px; font-size: 12px; }
+      #credit { position: fixed; right: 8px; bottom: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.75); text-shadow: 0 1px 2px #0008; }
+      @media (max-width: 560px) { #help { display: none; } #top { width: 208px; } select, input[type="range"] { width: 116px; } }
+    </style>
+  </head>
+  <body>
+    <div id="top" class="panel">
+      <h1>Mt Hood, Oregon &middot; 1:1 scale</h1>
+      <label>Jump to <select id="jump"></select></label>
+      <label>Quality <select id="quality"></select></label>
+      <label><span>Time <span id="hourLabel"></span></span> <input id="hour" type="range" min="7.75" max="16.5" step="0.25" /></label>
+      <div id="help">Drag to orbit, scroll to zoom, right-drag to pan. WASD or arrow keys to fly, Shift to go faster.</div>
+    </div>
+    <div id="read" class="panel">
+      <div><span class="k">Camera</span><span id="camElev"></span>, <span id="agl"></span></div>
+      <div><span class="k">Summit check</span><span id="summit">waiting for data</span></div>
+      <div id="status"></div>
+    </div>
+    <div id="credit">Elevation: USGS 3DEP via AWS Terrain Tiles &middot; Imagery: USGS National Map</div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
