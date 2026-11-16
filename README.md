@@ -20,7 +20,7 @@ npm run build    # production build in dist/
 
 Live site: https://spax0530.github.io/mt-hood-twin/
 
-Pushing to `main` builds the site and publishes it to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/deploy.yml`).
+`npm run deploy` builds the site and publishes it to the `gh-pages` branch, which GitHub Pages serves.
 
 ## Controls
 
