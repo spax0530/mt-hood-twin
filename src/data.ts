@@ -49,8 +49,12 @@ export interface MapData {
 export async function loadMapData(): Promise<MapData | null> {
   try {
     const res = await fetch('./data/osm.json');
-    if (!res.ok) return null;
-    return (await res.json()) as MapData;
+    if (res.ok) return (await res.json()) as MapData;
+  } catch { /* fall through */ }
+  // Preview copy left in this browser by tools/fetch-data.html, used until the file is in the repo
+  try {
+    const local = localStorage.getItem('mt-hood-osm');
+    return local ? (JSON.parse(local) as MapData) : null;
   } catch {
     return null;
   }
