@@ -43,6 +43,8 @@ export class Terrain {
   private active = 0;
   imageryOk: boolean | null = null;
   demError: string | null = null;
+  /** Optional painter for a per-tile image laid over the snow (ski runs). */
+  overlay: ((z: number, x: number, y: number) => HTMLCanvasElement | null) | null = null;
   /** Lidar service health: counts decide whether to keep asking it. */
   lidarOk = 0;
   lidarFail = 0;
@@ -56,6 +58,11 @@ export class Terrain {
 
   setQuality(q: Quality) {
     this.q = q;
+    this.reload();
+  }
+
+  /** Drop every tile and load again (after a quality change or new overlay data). */
+  reload() {
     for (const r of this.roots) this.dispose(r);
     this.roots = this.roots.map((r) => new Node(r.z, r.x, r.y));
     this.queue = [];
@@ -114,6 +121,7 @@ export class Terrain {
       const u = n.mesh.material.uniforms;
       u.uNormal.value.dispose();
       if (u.uHasImg.value > 0.5) u.uImg.value.dispose();
+      if (u.uHasOverlay.value > 0.5) u.uOverlay.value.dispose();
       n.mesh.material.dispose();
       n.mesh = null;
     }
@@ -229,6 +237,15 @@ export class Terrain {
 
     n.mesh = new THREE.Mesh(geo, makeTerrainMaterial(this.shared, nt));
     n.mesh.visible = false;
+    const over = this.overlay?.(n.z, n.x, n.y);
+    if (over) {
+      const t = new THREE.CanvasTexture(over);
+      t.flipY = false;
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = this.maxAniso;
+      n.mesh.material.uniforms.uOverlay.value = t;
+      n.mesh.material.uniforms.uHasOverlay.value = 1;
+    }
     this.group.add(n.mesh);
   }
 

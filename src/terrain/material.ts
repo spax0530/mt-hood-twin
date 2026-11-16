@@ -7,6 +7,7 @@ export interface SharedUniforms {
   uSkyColor: { value: THREE.Color };
   uHazeColor: { value: THREE.Color };
   uHaze: { value: number };
+  uRuns: { value: number };
 }
 
 const vert = /* glsl */ `
@@ -27,6 +28,9 @@ const frag = /* glsl */ `
 uniform sampler2D uNormal;
 uniform sampler2D uImg;
 uniform float uHasImg;
+uniform sampler2D uOverlay;
+uniform float uHasOverlay;
+uniform float uRuns;
 uniform vec3 uSun;
 uniform vec3 uSunColor;
 uniform vec3 uSkyColor;
@@ -81,6 +85,11 @@ void main() {
   vec3 albedo = mix(snow, rockCol, rock);
   albedo = mix(albedo, treeCol, tree);
 
+  if (uHasOverlay > 0.5) {
+    vec4 o = texture2D(uOverlay, vUv);
+    albedo = mix(albedo, o.rgb, o.a * uRuns);
+  }
+
   float ndl = max(dot(n, uSun), 0.0);
   vec3 col = albedo * (uSunColor * ndl + uSkyColor * (0.35 + 0.65 * n.y));
 
@@ -105,6 +114,8 @@ export function makeTerrainMaterial(shared: SharedUniforms, normalTex: THREE.Tex
       uNormal: { value: normalTex },
       uImg: { value: blank },
       uHasImg: { value: 0 },
+      uOverlay: { value: blank },
+      uHasOverlay: { value: 0 },
     },
   });
 }

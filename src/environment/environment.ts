@@ -11,6 +11,7 @@ export class Environment {
     uSkyColor: { value: new THREE.Color() },
     uHazeColor: { value: new THREE.Color() },
     uHaze: { value: 1 / 60000 },
+    uRuns: { value: 1 },
   };
   hour = 11;
 
