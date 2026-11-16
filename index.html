@@ -23,6 +23,10 @@
       #status { color: #ffd98a; }
       #status:empty { display: none; }
       #help { color: #a9b8c7; margin-top: 8px; font-size: 12px; }
+      #compass { top: 12px; right: 12px; padding: 8px 10px 6px; text-align: center; cursor: pointer; user-select: none; }
+      #compass svg { display: block; width: 64px; height: 64px; }
+      #rose { transform-origin: 50% 50%; transform-box: view-box; }
+      #bearing { font-size: 12px; margin-top: 2px; font-variant-numeric: tabular-nums; }
       #credit { position: fixed; right: 8px; bottom: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.75); text-shadow: 0 1px 2px #0008; }
       @media (max-width: 560px) { #help { display: none; } #top { width: 208px; } select, input[type="range"] { width: 116px; } }
     </style>
@@ -35,12 +39,25 @@
       <label><span>Time <span id="hourLabel"></span></span> <input id="hour" type="range" min="7.75" max="16.5" step="0.25" /></label>
       <div id="help">Drag to orbit, scroll to zoom, right-drag to pan. WASD or arrow keys to fly, Shift to go faster.</div>
     </div>
+    <div id="compass" class="panel" title="Click to face north">
+      <svg viewBox="0 0 64 64" aria-label="Compass">
+        <circle cx="32" cy="32" r="29" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" />
+        <g id="rose">
+          <polygon points="32,7 38,32 26,32" fill="#e5484d" />
+          <polygon points="32,57 38,32 26,32" fill="#dfe6ee" />
+          <text x="32" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">N</text>
+          <g stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><line x1="59" y1="32" x2="54" y2="32" /><line x1="5" y1="32" x2="10" y2="32" /></g>
+        </g>
+      </svg>
+      <div id="bearing"></div>
+    </div>
     <div id="read" class="panel">
       <div><span class="k">Camera</span><span id="camElev"></span>, <span id="agl"></span></div>
+      <div><span class="k">Ground detail</span><span id="detail">...</span></div>
       <div><span class="k">Summit check</span><span id="summit">waiting for data</span></div>
       <div id="status"></div>
     </div>
-    <div id="credit">Elevation: USGS 3DEP via AWS Terrain Tiles &middot; Imagery: USGS National Map</div>
+    <div id="credit">Elevation: USGS 3DEP &middot; Imagery: USGS National Map</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

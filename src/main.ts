@@ -33,6 +33,7 @@ const hud = new Hud(places, initialQuality, env.hour, {
   onJump: (p) => rig.jumpTo(p),
   onQuality: (name) => { quality = QUALITY[name]; terrain.setQuality(quality); resize(); },
   onHour: (h) => env.setHour(h),
+  onNorth: () => rig.faceNorth(),
 });
 const startId = new URLSearchParams(location.search).get('at') ?? 'mountain';
 const start = places.find((p) => p.id === startId) ?? places[0];
@@ -46,10 +47,12 @@ renderer.setAnimationLoop(() => {
   rig.update(dt);
   terrain.update(camera.position);
   renderer.render(scene, camera);
+  hud.setHeading(rig.heading());
 
   if (frame++ % 10 === 0) {
     const g = terrain.heightAt(camera.position.x, camera.position.z);
     hud.setReadout(camera.position.y, g ? g.h : null);
+    hud.setDetail(terrain.heightAt(rig.controls.target.x, rig.controls.target.z), terrain.lidarDown);
     hud.setSummit(terrain.maxHeightNear(SUMMIT.lat, SUMMIT.lon, 300));
     hud.setStatus(
       terrain.demError

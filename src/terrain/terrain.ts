@@ -1,8 +1,10 @@
 import * as THREE from 'three';
-import { BOUNDS, ROOT_Z, type Quality } from '../config';
+import { BOUNDS, LIDAR_MIN_Z, ROOT_Z, TILE_DEM_MAX_Z, type Quality } from '../config';
 import { latToTileY, lonToTileX, tileLat, tileLon, toGeo, toLocal } from '../geo';
 import { makeTerrainMaterial, type SharedUniforms } from './material';
-import { loadDem, loadImagery, sampleHeights, TILE_PX } from './tiles';
+import { loadDem, loadImagery, loadLidar, sampleHeights, TILE_PX } from './tiles';
+
+export interface GroundSample { h: number; zoom: number; lidar: boolean; res: number }
 
 type State = 'new' | 'loading' | 'ready' | 'failed';
 
@@ -11,6 +13,7 @@ class Node {
   state: State = 'new';
   mesh: THREE.Mesh<THREE.BufferGeometry, THREE.ShaderMaterial> | null = null;
   heights: Float32Array | null = null;
+  lidar = false;
   box = new THREE.Box3();
   size: number;
   dist = Infinity;
@@ -40,6 +43,10 @@ export class Terrain {
   private active = 0;
   imageryOk: boolean | null = null;
   demError: string | null = null;
+  /** Lidar service health: counts decide whether to keep asking it. */
+  lidarOk = 0;
+  lidarFail = 0;
+  get lidarDown() { return this.lidarOk === 0 && this.lidarFail >= 4; }
 
   constructor(private shared: SharedUniforms, private q: Quality, private maxAniso: number) {
     const x0 = Math.floor(lonToTileX(BOUNDS.west, ROOT_Z)), x1 = Math.floor(lonToTileX(BOUNDS.east, ROOT_Z));
@@ -131,7 +138,20 @@ export class Terrain {
 
   private async load(n: Node) {
     try {
-      n.heights = await loadDem(n.z, n.x, n.y);
+      if (n.z >= LIDAR_MIN_Z && !this.lidarDown) {
+        try {
+          n.heights = await loadLidar(n.z, n.x, n.y);
+          n.lidar = true;
+          this.lidarOk++;
+        } catch (e) {
+          this.lidarFail++;
+          console.warn('Lidar tile failed', n.z, n.x, n.y, e);
+        }
+      }
+      if (!n.heights) {
+        if (n.z > TILE_DEM_MAX_Z) throw new Error('no elevation source at this zoom');
+        n.heights = await loadDem(n.z, n.x, n.y);
+      }
     } catch (e) {
       n.state = 'failed';
       if (n.z === ROOT_Z) this.demError = String(e);
@@ -213,7 +233,7 @@ export class Terrain {
   }
 
   /** Ground elevation (m) at a local position, from the most detailed tile loaded there. */
-  heightAt(x: number, z: number): { h: number; zoom: number } | null {
+  heightAt(x: number, z: number): GroundSample | null {
     const { lat, lon } = toGeo(x, z);
     let list: Node[] | null = this.roots, best: Node | null = null;
     while (list) {
@@ -228,13 +248,13 @@ export class Terrain {
     }
     if (!best) return null;
     const fx = lonToTileX(lon, best.z) - best.x, fy = latToTileY(lat, best.z) - best.y;
-    return { h: sampleHeights(best.heights!, fx * TILE_PX - 0.5, fy * TILE_PX - 0.5), zoom: best.z };
+    return { h: sampleHeights(best.heights!, fx * TILE_PX - 0.5, fy * TILE_PX - 0.5), zoom: best.z, lidar: best.lidar, res: best.size / TILE_PX };
   }
 
   /** Highest ground within `radius` meters of a geographic point (used to verify scale). */
-  maxHeightNear(lat: number, lon: number, radius: number): { h: number; zoom: number } | null {
+  maxHeightNear(lat: number, lon: number, radius: number): GroundSample | null {
     const c = toLocal(lat, lon);
-    let out: { h: number; zoom: number } | null = null;
+    let out: GroundSample | null = null;
     for (let dz = -radius; dz <= radius; dz += radius / 25)
       for (let dx = -radius; dx <= radius; dx += radius / 25) {
         const s = this.heightAt(c.x + dx, c.z + dz);

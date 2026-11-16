@@ -42,6 +42,20 @@ export class CameraRig {
     this.controls.update();
   }
 
+  /** Compass heading in degrees, clockwise from north. */
+  heading(): number {
+    this.camera.getWorldDirection(this.fwd);
+    return (THREE.MathUtils.radToDeg(Math.atan2(this.fwd.x, -this.fwd.z)) + 360) % 360;
+  }
+
+  /** Swing the camera around its focus point so north is straight ahead. */
+  faceNorth() {
+    const t = this.controls.target, c = this.camera.position;
+    const r = Math.hypot(c.x - t.x, c.z - t.z);
+    c.set(t.x, c.y, t.z + r);
+    this.controls.update();
+  }
+
   update(dt: number) {
     const k = this.keys;
     const f = (k.has('KeyW') || k.has('ArrowUp') ? 1 : 0) - (k.has('KeyS') || k.has('ArrowDown') ? 1 : 0);

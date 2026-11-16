@@ -8,7 +8,13 @@ Every dataset and reference used, with license. Updated each phase.
   - Registry page: https://registry.opendata.aws/terrain-tiles/
   - In the United States these tiles are built from USGS 3DEP elevation data (public domain). Attribution requested by the tile set is listed at https://github.com/tilezen/joerd/blob/master/docs/attribution.md
   - Used at zoom 11 to 15. Native detail over Mt Hood is about 10 m or better; zoom 15 is partly interpolated.
-  - Status: streamed by the visitor's browser at run time. Not yet verified against the live site (see README status).
+  - Status: confirmed working on the live site (summit reads 3,427 m against 3,429 m surveyed).
+
+- **USGS 3DEP dynamic elevation service**, `https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer`
+  - Public domain. Serves the best elevation data available at each spot, including 1 m lidar where it has been flown.
+  - Used near the camera at zoom 15 to 17 (about 3.4 m down to 0.8 m per sample). If it does not answer, the app falls back to the tiles above and says so in the "Ground detail" readout.
+  - Bare-earth data: it shows the ground, not buildings or trees.
+  - Status: tested only against a stand-in server. Whether Mt Hood has 1 m coverage in this service is still to be confirmed on the live site.
 
 ## Imagery
 

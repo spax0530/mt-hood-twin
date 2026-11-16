@@ -46,7 +46,8 @@ Earth curvature is not modeled. Across the 30 km scene that is a drop of under 2
 
 ## Known limits right now
 
-- Elevation is streamed at about 5 to 10 m detail. 1 m lidar for the whole mountain is too large to stream to a browser. The plan is to bake 1 m lidar for the resort areas only when detail there starts to matter (buildings and lifts).
+- Elevation is 10 m source data across the mountain. On High quality, ground near the camera is requested from the USGS lidar service at up to 0.8 m per sample. The "Ground detail" readout shows which one you are looking at.
+- No buildings yet (Phase 2). The elevation data is bare earth, so towns show as empty ground.
 - The aerial imagery is from summer. Winter snow, rock and forest are drawn by a shader that uses elevation, steepness and where the imagery shows tree canopy. Forest is a surface texture for now, not individual 3D trees.
 - The terrain does not yet cast shadows onto itself.
 

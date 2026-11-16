@@ -1,4 +1,5 @@
-import { SOURCES } from '../config';
+import { fromArrayBuffer } from 'geotiff';
+import { IMG_MAX_Z, SOURCES } from '../config';
 
 export const TILE_PX = 256;
 
@@ -31,17 +32,63 @@ export async function loadDem(z: number, x: number, y: number): Promise<Float32A
   return out;
 }
 
-/** Aerial imagery for a tile, optionally stitched from sharper child tiles. */
+const HALF = Math.PI * 6378137; // half the Web Mercator world width (m)
+
+/**
+ * Elevation for a tile from the USGS 3DEP dynamic service, which serves the best data
+ * available at each spot (1 m lidar where it has been flown). Throws if the answer is not
+ * a clean 256 x 256 grid of plausible heights, so the caller can fall back.
+ */
+export async function loadLidar(z: number, x: number, y: number): Promise<Float32Array> {
+  const span = (2 * HALF) / 2 ** z;
+  const minx = -HALF + x * span, maxy = HALF - y * span;
+  const q = new URLSearchParams({
+    bbox: [minx, maxy - span, minx + span, maxy].join(','),
+    bboxSR: '3857', imageSR: '3857', size: `${TILE_PX},${TILE_PX}`,
+    format: 'tiff', pixelType: 'F32', interpolation: 'RSP_BilinearInterpolation', f: 'image',
+  });
+  const res = await fetch(`${SOURCES.lidar}?${q}`, { mode: 'cors' });
+  if (!res.ok) throw new Error(`lidar ${res.status}`);
+  const img = await (await fromArrayBuffer(await res.arrayBuffer())).getImage();
+  if (img.getWidth() !== TILE_PX || img.getHeight() !== TILE_PX) throw new Error('lidar: unexpected size');
+  const out = Float32Array.from((await img.readRasters({ interleave: true })) as unknown as ArrayLike<number>);
+  if (out.length !== TILE_PX * TILE_PX) throw new Error('lidar: unexpected bands');
+  for (let i = 0; i < out.length; i++) if (!(out[i] > -100 && out[i] < 4000)) throw new Error('lidar: no data');
+  return out;
+}
+
+const bitmaps = new Map<string, Promise<ImageBitmap>>();
+function cachedBitmap(u: string): Promise<ImageBitmap> {
+  let p = bitmaps.get(u);
+  if (!p) {
+    p = fetchBitmap(u);
+    bitmaps.set(u, p);
+    p.catch(() => bitmaps.delete(u));
+    if (bitmaps.size > 48) bitmaps.delete(bitmaps.keys().next().value!);
+  }
+  return p;
+}
+
+/** Aerial imagery for a tile: stitched from sharper tiles, or cropped from a coarser one past the imagery's deepest zoom. */
 export async function loadImagery(z: number, x: number, y: number, zoomOffset: number): Promise<HTMLCanvasElement> {
-  const n = 2 ** zoomOffset;
+  const imgZ = Math.min(z + zoomOffset, IMG_MAX_Z);
   const c = document.createElement('canvas');
-  c.width = c.height = TILE_PX * n;
   const ctx = c.getContext('2d')!;
+  if (imgZ < z) {
+    const d = z - imgZ, n = 2 ** d;
+    const b = await cachedBitmap(url(SOURCES.img, imgZ, x >> d, y >> d));
+    c.width = c.height = TILE_PX;
+    const s = TILE_PX / n;
+    ctx.drawImage(b, (x - ((x >> d) << d)) * s, (y - ((y >> d) << d)) * s, s, s, 0, 0, TILE_PX, TILE_PX);
+    return c;
+  }
+  const n = 2 ** (imgZ - z);
+  c.width = c.height = TILE_PX * n;
   const jobs: Promise<void>[] = [];
   for (let j = 0; j < n; j++)
     for (let i = 0; i < n; i++)
       jobs.push(
-        fetchBitmap(url(SOURCES.img, z + zoomOffset, x * n + i, y * n + j)).then((b) => {
+        fetchBitmap(url(SOURCES.img, imgZ, x * n + i, y * n + j)).then((b) => {
           ctx.drawImage(b, i * TILE_PX, j * TILE_PX, TILE_PX, TILE_PX);
           b.close();
         }),

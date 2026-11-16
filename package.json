@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "geotiff": "^3.0.5",
     "three": "^0.187.0"
   },
   "devDependencies": {
