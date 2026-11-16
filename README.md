@@ -6,7 +6,7 @@ An interactive 3D model of Mt Hood, Oregon at true 1:1 scale in winter, built to
 
 | Phase | What | State |
 |---|---|---|
-| 1 | Terrain and winter environment | Built, waiting on first check against real data on the live site |
+| 1 | Terrain and winter environment | Live, first check against real data in progress |
 | 2 | Resorts, runs, lodges and buildings | Not started |
 | 3 | Lifts, moving at real speed | Not started |
 
@@ -18,7 +18,9 @@ npm run dev      # local development
 npm run build    # production build in dist/
 ```
 
-Pushing to `main` deploys to GitHub Pages through `.github/workflows/deploy.yml` (in the repo settings, set Pages source to "GitHub Actions" once).
+Live site: https://spax0530.github.io/mt-hood-twin/
+
+Pushing to `main` builds the site and publishes it to the `gh-pages` branch, which GitHub Pages serves (`.github/workflows/deploy.yml`).
 
 ## Controls
 
