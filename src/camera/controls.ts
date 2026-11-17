@@ -21,7 +21,7 @@ export class CameraRig {
     this.controls.dampingFactor = 0.08;
     this.controls.minDistance = 2;
     this.controls.maxDistance = 60000;
-    this.controls.maxPolarAngle = Math.PI * 0.497;
+    this.controls.maxPolarAngle = Math.PI * 0.97; // allow looking up at lifts from below
     this.controls.screenSpacePanning = false;
     this.controls.zoomToCursor = true;
     addEventListener('keydown', (e) => { if (!(e.target instanceof HTMLSelectElement)) this.keys.add(e.code); });
