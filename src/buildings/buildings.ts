@@ -118,7 +118,10 @@ function heights(b: Building): { eave: number; ridge: number } {
 
 function addSimple(B: Builder, b: Building, p: number[][], wall: number[]) {
   const g = b.g!;
-  const { eave, ridge } = heights(b);
+  let { eave, ridge } = heights(b);
+  // Lidar over a small building often catches overhanging trees; keep heights plausible for the footprint
+  const cap = Math.max(6, 1.25 * Math.sqrt(Math.abs(polyArea(p))));
+  if (ridge > cap) { eave *= cap / ridge; ridge = cap; eave = Math.max(2.2, eave); }
   const lo = g - SINK;
   const rect = boundingRect(p);
   const fill = rect ? Math.abs(polyArea(p)) / rect.area : 0;
