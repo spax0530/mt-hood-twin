@@ -1,0 +1,15 @@
+{
+  "note": "What to build from the landmark lidar file. Positions, roof shapes and heights come from lidar; everything listed under each landmark here is an estimate read from photos unless marked otherwise.",
+  "landmarks": [
+    {
+      "id": "timberline-lodge", "name": "Timberline Lodge", "patch": "timberline-lodge",
+      "baseTop": 1815.2, "floorHeight": 2.95,
+      "windows": { "pitch": 2.7, "w": 1.2, "h": 1.6, "sill": 0.8 },
+      "materials": { "base": "rubble-stone", "siding": "clapboard-grey", "roof": "cedar-shake", "trim": "#d9dad6" },
+      "extras": [
+        { "type": "hex-chimney", "x": 75.6, "y": 21.6, "radius": 2.15, "top": 1839.71, "bottom": 1826.0, "note": "Position and top from lidar; 14 ft diameter from Wikipedia." },
+        { "type": "weathervane", "x": 75.6, "y": 21.6, "base": 1839.71, "height": 2.4, "note": "Bronze snow goose; size estimated from photos." }
+      ]
+    }
+  ]
+}

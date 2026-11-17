@@ -8,6 +8,7 @@ import { Labels, type LabelItem } from './ui/labels';
 import { loadMapData } from './data';
 import { RunPainter } from './resorts/runs';
 import { buildBuildings } from './buildings/buildings';
+import { loadLandmarks } from './buildings/landmarks';
 import { toLocal } from './geo';
 import { LiftSystem, type LiftRecord } from './lifts/lift';
 
@@ -44,7 +45,7 @@ const hud = new Hud(places, initialQuality, env.hour, {
   onToggle: (what, on) => {
     if (what === 'runs') env.uniforms.uRuns.value = on ? 1 : 0;
     if (what === 'labels' && labels) labels.enabled = on;
-    if (what === 'buildings' && buildings) buildings.visible = on;
+    if (what === 'buildings') { if (buildings) buildings.visible = on; if (landmarks) landmarks.visible = on; }
     if (what === 'lifts' && lifts) lifts.group.visible = on;
   },
 });
@@ -56,6 +57,7 @@ rig.jumpTo(start);
 // Resorts, runs, lifts and buildings (Phase 2 data)
 let labels: Labels | null = null;
 let buildings: THREE.Mesh | null = null;
+let landmarks: THREE.Group | null = null;
 let lifts: LiftSystem | null = null;
 try {
   const doc = (await (await fetch('./data/lifts.json')).json()) as { lifts: LiftRecord[] };
@@ -72,7 +74,17 @@ if (map) {
   const painter = new RunPainter(map.runs);
   terrain.overlay = (z, x, y) => painter.paint(z, x, y);
   terrain.reload();
-  buildings = buildBuildings(map.buildings, env.uniforms);
+  // Landmark buildings get a detailed model; everything else keeps the generic lidar shell
+  let detailed = new Set<number>();
+  try {
+    const lm = await loadLandmarks(env.uniforms);
+    detailed = lm.osmIds;
+    landmarks = lm.group;
+    scene.add(landmarks);
+  } catch (e) {
+    console.warn('Landmark models failed to load', e);
+  }
+  buildings = buildBuildings(map.buildings.filter((b) => !detailed.has(b.id)), env.uniforms);
   scene.add(buildings);
 
   const items: LabelItem[] = [];
