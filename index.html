@@ -19,6 +19,7 @@
       select { background: #1c2a3a; color: #eef3f8; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 6px; padding: 3px 4px; font: inherit; }
       #read { bottom: 12px; left: 12px; font-variant-numeric: tabular-nums; }
       #read div { white-space: nowrap; }
+      #read { max-width: calc(100vw - 48px); }
       #read span.k { color: #a9b8c7; display: inline-block; width: 92px; }
       #status { color: #ffd98a; }
       #status:empty { display: none; }
@@ -40,7 +41,7 @@
       .lbl.run.advanced, .lbl.run.expert { background: rgba(12, 14, 16, 0.9); }
       #legend { margin-top: 8px; font-size: 11px; color: #c4d0dc; display: flex; flex-wrap: wrap; gap: 4px 10px; }
       #legend i { display: inline-block; width: 14px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 4px; }
-      #credit { position: fixed; right: 8px; bottom: 6px; font-size: 11px; color: rgba(255, 255, 255, 0.75); text-shadow: 0 1px 2px #0008; }
+      #credit { font-size: 10px; color: #8fa0b2; margin-top: 4px; white-space: normal; max-width: 420px; }
       @media (max-width: 560px) { #help { display: none; } #top { width: 208px; } select, input[type="range"] { width: 116px; } }
     </style>
   </head>
@@ -79,8 +80,8 @@
       <div><span class="k">Ground detail</span><span id="detail">...</span></div>
       <div><span class="k">Summit check</span><span id="summit">waiting for data</span></div>
       <div id="status"></div>
+      <div id="credit">Elevation: USGS 3DEP, Oregon DOGAMI lidar &middot; Imagery: USGS &middot; Runs, lifts, buildings: &copy; OpenStreetMap contributors</div>
     </div>
-    <div id="credit">Elevation: USGS 3DEP, Oregon DOGAMI lidar &middot; Imagery: USGS &middot; Runs, lifts, buildings: &copy; OpenStreetMap contributors</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

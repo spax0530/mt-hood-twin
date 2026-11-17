@@ -37,7 +37,7 @@ export class RunPainter {
         box[0] = Math.min(box[0], x); box[1] = Math.min(box[1], y);
         box[2] = Math.max(box[2], x); box[3] = Math.max(box[3], y);
       }
-      this.items.push({ run, m, box, widthM: run.t === 'downhill' ? 9 : 4 });
+      this.items.push({ run, m, box, widthM: run.t === 'downhill' ? 7 : 3.5 });
     }
   }
 
@@ -73,8 +73,8 @@ export class RunPainter {
           ctx.fillStyle = st.color;
           ctx.fill();
         } else {
-          const w = Math.max(1.6, it.widthM / mpp);
-          ctx.globalAlpha = 0.85;
+          const w = Math.max(1.3, it.widthM / mpp);
+          ctx.globalAlpha = 0.72;
           ctx.strokeStyle = st.color;
           ctx.lineWidth = w;
           ctx.setLineDash(st.dash ? [w * 2.2, w * 1.8] : []);

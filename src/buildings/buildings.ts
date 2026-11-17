@@ -25,7 +25,7 @@ varying vec3 vColor; varying vec3 vN; varying vec3 vWorld;
 void main() {
   #include <logdepthbuf_fragment>
   vec3 n = normalize(vN);
-  if (!gl_FrontFacing) n = -n;
+  if (dot(n, cameraPosition - vWorld) < 0.0) n = -n;
   // Snow settles on anything flatter than roughly 40 degrees; steeper roofs shed it.
   float snow = smoothstep(0.62, 0.80, n.y);
   vec3 albedo = mix(vColor, vec3(0.90, 0.93, 0.97), snow);
@@ -38,16 +38,29 @@ void main() {
 }`;
 
 const WALLS: [number, number, number][] = [
-  [0.20, 0.13, 0.09], [0.26, 0.18, 0.12], [0.15, 0.11, 0.09], [0.30, 0.27, 0.24],
-  [0.22, 0.24, 0.25], [0.33, 0.24, 0.16], [0.18, 0.20, 0.17], [0.36, 0.33, 0.29],
+  [0.16, 0.10, 0.07], [0.20, 0.14, 0.10], [0.12, 0.09, 0.07], [0.23, 0.21, 0.19],
+  [0.17, 0.19, 0.20], [0.24, 0.17, 0.11], [0.14, 0.16, 0.13], [0.27, 0.25, 0.22],
 ];
 const ROOF: [number, number, number] = [0.10, 0.10, 0.11];
 
 class Builder {
   pos: number[] = [];
   col: number[] = [];
+  nor: number[] = [];
+  /** Flat triangle: the normal comes from its own plane. */
   tri(a: number[], b: number[], c: number[], color: number[]) {
+    const ux = b[0] - a[0], uy = b[1] - a[1], uz = b[2] - a[2];
+    const vx = c[0] - a[0], vy = c[1] - a[1], vz = c[2] - a[2];
+    let nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    const l = Math.hypot(nx, ny, nz) || 1;
+    nx /= l; ny /= l; nz /= l;
+    if (ny < 0) { nx = -nx; ny = -ny; nz = -nz; }
+    this.triN(a, b, c, [nx, ny, nz], [nx, ny, nz], [nx, ny, nz], color);
+  }
+  /** Smooth triangle with a normal per corner. */
+  triN(a: number[], b: number[], c: number[], na: number[], nb: number[], nc: number[], color: number[]) {
     this.pos.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2]);
+    this.nor.push(na[0], na[1], na[2], nb[0], nb[1], nb[2], nc[0], nc[1], nc[2]);
     for (let i = 0; i < 3; i++) this.col.push(color[0], color[1], color[2]);
   }
   quad(a: number[], b: number[], c: number[], d: number[], color: number[]) {
@@ -144,48 +157,80 @@ function addSimple(B: Builder, b: Building, p: number[][], wall: number[]) {
 function addFromLidar(B: Builder, b: Building, p: number[][], wall: number[]) {
   const G = b.grid!;
   const { nx, ny } = G;
-  const X = new Float32Array(nx * ny), Z = new Float32Array(nx * ny), H = new Float32Array(nx * ny);
-  const inside = new Uint8Array(nx * ny);
+  const N = nx * ny;
+  const X = new Float32Array(N), Z = new Float32Array(N), raw = new Float32Array(N);
+  const inside = new Uint8Array(N);
   for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
     const k = j * nx + i;
     const l = toLocal(G.y1 - j * G.dy, G.x0 + i * G.dx);
-    X[k] = l.x; Z[k] = l.z; H[k] = G.h[k] / 10;
+    X[k] = l.x; Z[k] = l.z; raw[k] = G.h[k] / 10;
     inside[k] = inPoly(l.x, l.z, p) ? 1 : 0;
   }
-  const keep = new Uint8Array((nx - 1) * (ny - 1));
-  for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
-    const a = j * nx + i;
-    keep[j * (nx - 1) + i] = inPoly((X[a] + X[a + nx + 1]) / 2, (Z[a] + Z[a + nx + 1]) / 2, p) ? 1 : 0;
-  }
-  // Points just outside the walls read ground level; lift them to the neighbouring roof height so edges stay vertical
-  const R = new Float32Array(H);
+  // 3 x 3 median inside the footprint removes lidar speckle but keeps ridges and eaves sharp
+  const R = new Float32Array(raw);
+  const win: number[] = [];
   for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
     const k = j * nx + i;
-    if (inside[k]) continue;
-    let s = 0, n = 0;
+    if (!inside[k]) continue;
+    win.length = 0;
     for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
       const ii = i + di, jj = j + dj;
-      if (ii < 0 || jj < 0 || ii >= nx || jj >= ny || !inside[jj * nx + ii]) continue;
-      s += H[jj * nx + ii]; n++;
+      if (ii >= 0 && jj >= 0 && ii < nx && jj < ny && inside[jj * nx + ii]) win.push(raw[jj * nx + ii]);
     }
-    if (n) R[k] = s / n;
+    win.sort((a, c) => a - c);
+    R[k] = win[win.length >> 1];
+  }
+  // Points outside the walls read ground level; carry the roof height outward so the edge stays crisp
+  const known = new Uint8Array(inside);
+  for (let pass = 0; pass < 2; pass++) {
+    const next = new Uint8Array(known);
+    for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+      const k = j * nx + i;
+      if (known[k]) continue;
+      let s = 0, n = 0;
+      for (let dj = -1; dj <= 1; dj++) for (let di = -1; di <= 1; di++) {
+        const ii = i + di, jj = j + dj;
+        if (ii < 0 || jj < 0 || ii >= nx || jj >= ny || !known[jj * nx + ii]) continue;
+        s += R[jj * nx + ii]; n++;
+      }
+      if (n) { R[k] = s / n; next[k] = 1; }
+    }
+    known.set(next);
   }
   const floor = 2.2; // a roof is never lower than this above the lowest ground
-  const V = (k: number) => [X[k], G.base + Math.max(R[k], floor), Z[k]];
-  const lo = G.base - SINK;
-  const kept = (i: number, j: number) => i >= 0 && j >= 0 && i < nx - 1 && j < ny - 1 && keep[j * (nx - 1) + i] === 1;
+  for (let k = 0; k < N; k++) R[k] = Math.max(R[k], floor);
+  const V = (k: number) => [X[k], G.base + R[k], Z[k]];
+  const at = (i: number, j: number) => R[Math.min(ny - 1, Math.max(0, j)) * nx + Math.min(nx - 1, Math.max(0, i))];
+  const Nrm = (k: number) => {
+    const i = k % nx, j = (k / nx) | 0;
+    const gx = (at(i + 1, j) - at(i - 1, j)) / (2 * G.step), gz = (at(i, j + 1) - at(i, j - 1)) / (2 * G.step);
+    const l = Math.hypot(gx, 1, gz);
+    return [-gx / l, 1 / l, -gz / l];
+  };
+  // Roof: every grid cell that touches the footprint, so the snow overhangs the walls slightly
   for (let j = 0; j < ny - 1; j++) for (let i = 0; i < nx - 1; i++) {
-    if (!kept(i, j)) continue;
     const a = j * nx + i, bq = a + 1, c = a + nx, d = c + 1;
-    B.tri(V(a), V(c), V(bq), ROOF); B.tri(V(bq), V(c), V(d), ROOF);
-    const side = (k1: number, k2: number) => {
-      const p1 = V(k1), p2 = V(k2);
-      B.quad([p1[0], lo, p1[2]], [p2[0], lo, p2[2]], p2, p1, wall);
-    };
-    if (!kept(i, j - 1)) side(a, bq);
-    if (!kept(i, j + 1)) side(d, c);
-    if (!kept(i - 1, j)) side(c, a);
-    if (!kept(i + 1, j)) side(bq, d);
+    if (!(inside[a] || inside[bq] || inside[c] || inside[d])) continue;
+    B.triN(V(a), V(c), V(bq), Nrm(a), Nrm(c), Nrm(bq), ROOF);
+    B.triN(V(bq), V(c), V(d), Nrm(bq), Nrm(c), Nrm(d), ROOF);
+  }
+  // Walls: the true footprint outline, rising to the roof height at each point
+  const sx = X[1] - X[0], sz = Z[nx] - Z[0];
+  const roofAt = (x: number, z: number) => {
+    const fi = Math.min(nx - 1.001, Math.max(0, (x - X[0]) / sx)), fj = Math.min(ny - 1.001, Math.max(0, (z - Z[0]) / sz));
+    const i = Math.floor(fi), j = Math.floor(fj), u = fi - i, v = fj - j, k = j * nx + i;
+    return G.base + (R[k] * (1 - u) + R[k + 1] * u) * (1 - v) + (R[k + nx] * (1 - u) + R[k + nx + 1] * u) * v;
+  };
+  const lo = G.base - SINK;
+  for (let e = 0; e < p.length; e++) {
+    const a = p[e], c = p[(e + 1) % p.length];
+    const len = Math.hypot(c[0] - a[0], c[1] - a[1]);
+    const parts = Math.max(1, Math.ceil(len / G.step));
+    for (let s = 0; s < parts; s++) {
+      const x1 = a[0] + ((c[0] - a[0]) * s) / parts, z1 = a[1] + ((c[1] - a[1]) * s) / parts;
+      const x2 = a[0] + ((c[0] - a[0]) * (s + 1)) / parts, z2 = a[1] + ((c[1] - a[1]) * (s + 1)) / parts;
+      B.quad([x1, lo, z1], [x2, lo, z2], [x2, roofAt(x2, z2), z2], [x1, roofAt(x1, z1), z1], wall);
+    }
   }
 }
 
@@ -204,7 +249,7 @@ export function buildBuildings(list: Building[], shared: SharedUniforms): THREE.
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(B.pos, 3));
   geo.setAttribute('color', new THREE.Float32BufferAttribute(B.col, 3));
-  geo.computeVertexNormals(); // unshared vertices, so every face gets its own flat normal
+  geo.setAttribute('normal', new THREE.Float32BufferAttribute(B.nor, 3));
   geo.computeBoundingSphere();
   const mat = new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: frag, uniforms: { ...shared }, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(geo, mat);

@@ -45,7 +45,17 @@ async function build() {
   const errs = [];
   log('1/4 Asking OpenStreetMap for runs, lifts and buildings...');
   const q = `[out:json][timeout:90];(way["aerialway"](${BB});node["aerialway"](${BB});way["piste:type"](${BB});relation["piste:type"](${BB});way["building"](${BB});relation["building"](${BB});way["landuse"="winter_sports"](${BB});relation["landuse"="winter_sports"](${BB});way["amenity"="parking"](${BB}););out body geom;`;
-  const E = (await (await fetch('https://overpass-api.de/api/interpreter', { method: 'POST', body: 'data=' + encodeURIComponent(q) })).json()).elements;
+  let E = null, lastErr = '';
+  const MIRRORS = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter', 'https://overpass.kumi.systems/api/interpreter', 'https://maps.mail.ru/osm/tools/overpass/api/interpreter'];
+  for (let k = 0; k < 8 && !E; k++) {
+    const u = MIRRORS[k % MIRRORS.length];
+    try {
+      const r = await fetch(u, { method: 'POST', body: 'data=' + encodeURIComponent(q) });
+      if (!r.ok) throw new Error(r.status + ' from ' + new URL(u).host);
+      E = (await r.json()).elements;
+    } catch (e) { lastErr = String(e); log('1/4 OpenStreetMap server busy (' + lastErr + '), trying another...'); await new Promise((r) => setTimeout(r, 4000)); }
+  }
+  if (!E) throw new Error('OpenStreetMap servers unavailable: ' + lastErr);
   const flat = (g) => { const o = []; for (const p of g) o.push(r6(p.lon), r6(p.lat)); return o; };
   const D = { fetched: new Date().toISOString(), source: 'OpenStreetMap via Overpass API (ODbL); heights from USGS 3DEP and Oregon DOGAMI lidar', areas: [], runs: [], lifts: [], stations: [], buildings: [], parking: [] };
   const nodeTag = {};
@@ -117,7 +127,7 @@ async function build() {
   const blob = new Blob([JSON.stringify(D)], { type: 'application/json' });
   const a = document.getElementById('save'); a.href = URL.createObjectURL(blob); a.download = 'mt-hood-osm.json'; a.style.display = ''; a.click();
   log(`4/4 Done. ${D.runs.length} runs, ${D.lifts.length} lifts, ${D.buildings.length} buildings, ${errs.length} failed requests.\nSaved mt-hood-osm.json (${(blob.size / 1e6).toFixed(1)} MB) to your Downloads folder.`);
-  window.__done = true;
+  window.__data = D; window.__done = true;
 }
 document.getElementById('go').onclick = () => build().catch((e) => log('Failed: ' + e));
 if (new URLSearchParams(location.search).has('auto')) build().catch((e) => log('Failed: ' + e));
