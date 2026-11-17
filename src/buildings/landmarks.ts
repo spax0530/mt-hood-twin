@@ -23,7 +23,7 @@ export interface LandmarkData {
 }
 
 const SIDING: Record<string, { kind: SurfaceKind; color: number }> = {
-  'clapboard-grey': { kind: 'clapboard', color: 0xb4bab9 },
+  'clapboard-grey': { kind: 'clapboard', color: 0xa3a9a8 },
   'clapboard-tan': { kind: 'clapboard', color: 0xb5a58c },
   'board-batten-grey': { kind: 'board-batten', color: 0xa9aeac },
   'board-batten-brown': { kind: 'board-batten', color: 0x6a5140 },
@@ -35,7 +35,7 @@ const ROOF: Record<string, { kind: SurfaceKind; color: number; metalness: number
   'metal-green': { kind: 'metal-roof', color: 0x3f5a4a, metalness: 0.5, roughness: 0.5 },
 };
 const BASE: Record<string, { kind: SurfaceKind; color: number }> = {
-  'rubble-stone': { kind: 'stone', color: 0x8a847a },
+  'rubble-stone': { kind: 'stone', color: 0x77716a },
   concrete: { kind: 'plain', color: 0x8d8d89 },
 };
 

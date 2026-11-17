@@ -40,13 +40,13 @@ def fit_plane(pts):
     if keep.sum() >= 6: p, *_ = np.linalg.lstsq(A[keep], pts[keep, 2], rcond=None)
     return p
 
-def segment(h, mask, step, min_cells=20, tol=0.45, gtol=0.55):
+def segment(h, mask, step, min_cells=28, tol=0.3, gtol=0.4):
     ny, nx = h.shape; gx, gy, res = local_planes(h, step)
     label = np.full((ny, nx), -1, int); planes = []
     order = np.argsort(np.where(mask, res, 99).ravel())
     for idx in order:
         j, i = divmod(int(idx), nx)
-        if not mask[j, i] or label[j, i] >= 0 or res[j, i] > 0.4: continue
+        if not mask[j, i] or label[j, i] >= 0 or res[j, i] > 0.2: continue
         p = np.array([gx[j, i], gy[j, i], h[j, i] - gx[j, i] * i * step - gy[j, i] * j * step])
         cells = [(j, i)]; label[j, i] = len(planes); stack = [(j, i)]; since = 0
         while stack:
@@ -55,7 +55,7 @@ def segment(h, mask, step, min_cells=20, tol=0.45, gtol=0.55):
                 nj, ni = cj + dj, ci + di
                 if not (0 <= nj < ny and 0 <= ni < nx) or not mask[nj, ni] or label[nj, ni] >= 0: continue
                 pred = p[0] * ni * step + p[1] * nj * step + p[2]
-                if abs(h[nj, ni] - pred) < tol and math.hypot(gx[nj, ni] - p[0], gy[nj, ni] - p[1]) < gtol + (0.5 if res[nj, ni] > 0.35 else 0):
+                if abs(h[nj, ni] - pred) < tol and math.hypot(gx[nj, ni] - p[0], gy[nj, ni] - p[1]) < gtol + (0.4 if res[nj, ni] > 0.25 else 0):
                     label[nj, ni] = len(planes); cells.append((nj, ni)); stack.append((nj, ni)); since += 1
                     if since >= 25 and len(cells) < 400 or since >= 200:
                         since = 0

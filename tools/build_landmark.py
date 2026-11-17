@@ -66,32 +66,29 @@ def build(D, spec):
     def raw(x, y):
         i = min(max(x / st, 0), nx - 1.001); j = min(max(y / st, 0), ny - 1.001); i0 = int(i); j0 = int(j); u = i - i0; v = j - j0
         return hs[j0, i0] * (1 - u) * (1 - v) + hs[j0, i0 + 1] * u * (1 - v) + hs[j0 + 1, i0] * (1 - u) * v + hs[j0 + 1, i0 + 1] * u * v
+    def near_core(j, i):
+        best = None
+        for dj in range(-4, 5):
+            for di in range(-4, 5):
+                nj, ni = j + dj, i + di
+                if 0 <= nj < ny and 0 <= ni < nx and core[nj, ni]:
+                    dd = dj * dj + di * di
+                    if best is None or dd < best[0]: best = (dd, nj, ni)
+        return best
     def H(x, y):
-        i = int(min(max(round(x / st), 0), nx - 1)); j = int(min(max(round(y / st), 0), ny - 1)); l = int(lab[j, i])
-        if l < 0:
-            # raw lidar: fall back to the nearest roof plane near the edges where lidar mixes roof and ground
-            if not core[j, i]:
-                best = None
-                for dj in range(-3, 4):
-                    for di in range(-3, 4):
-                        nj, ni = j + dj, i + di
-                        if 0 <= nj < ny and 0 <= ni < nx and core[nj, ni]:
-                            dd = dj * dj + di * di
-                            if best is None or dd < best[0]: best = (dd, nj, ni)
-                if best:
-                    if lab[best[1], best[2]] >= 0: return pz(int(lab[best[1], best[2]]), x, y)
-                    return float(hs[best[1], best[2]])
-            return float(raw(x, y))
-        a = pz(l, x, y)
-        for k in set(lab[max(0, j - 2):j + 3, max(0, i - 2):i + 3].ravel().tolist()):
-            if k < 0 or k == l: continue
-            b = pz(k, x, y)
-            if abs(a - b) < 0.7:
-                key = (min(l, k), max(l, k))
-                if key not in conv:
-                    cx, cy = cent[key[1]]; conv[key] = pz(key[0], cx, cy) > pz(key[1], cx, cy)
-                a = min(a, b) if conv[key] else max(a, b)
-        return float(a)
+        """Roof height: the fitted plane where it agrees with the lidar, the lidar itself where it does not."""
+        i = int(min(max(round(x / st), 0), nx - 1)); j = int(min(max(round(y / st), 0), ny - 1))
+        if not core[j, i]:
+            # at the eaves the lidar mixes roof and ground, so continue the roof outward from just inside
+            b = near_core(j, i)
+            if b is None: return float(raw(x, y))
+            _, cj, ci = b; l = int(lab[cj, ci])
+            if l >= 0 and abs(hs[cj, ci] - pz(l, ci * st, cj * st)) < 0.6: return float(pz(l, x, y))
+            return float(hs[cj, ci])
+        l = int(lab[j, i]); r = float(raw(x, y))
+        if l < 0: return r
+        a = pz(l, x, y); d = abs(a - r); w = min(1.0, max(0.0, (d - 0.3) / 0.4)); w = w * w * (3 - 2 * w)
+        return float(a * (1 - w) + r * w)
 
     poly = Polygon(R['poly'])
     if not poly.is_valid: poly = poly.buffer(0)
