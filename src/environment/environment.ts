@@ -81,6 +81,7 @@ export class Environment {
     s.add(ground);
     const next = this.pmrem.fromScene(s, 0, 0.1, 200);
     this.scene.environment = next.texture;
+    this.scene.environmentIntensity = 0.8;
     this.envTarget?.dispose();
     this.envTarget = next;
     sky.material.dispose(); ground.geometry.dispose();

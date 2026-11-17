@@ -160,9 +160,9 @@
      "how": "Derived: 4 seats / (1,600 riders per hour) x 5.0 m/s. Riders describe the spacing as wide."
     },
     "carrierCount": {
-     "value": 73,
+     "value": 79,
      "status": "estimated",
-     "how": "Derived from the loop length and the estimated spacing. Chair numbers 53 and (probably) 74 are visible in photos.",
+     "how": "Derived from the loop length, the estimated spacing and the slow pass through each station. Chair numbers 53 and (probably) 74 are visible in photos.",
      "sources": [
       "rm"
      ]
