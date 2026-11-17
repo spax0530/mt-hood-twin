@@ -1,15 +1,108 @@
 {
-  "note": "What to build from the landmark lidar file. Positions, roof shapes and heights come from lidar; everything listed under each landmark here is an estimate read from photos unless marked otherwise.",
-  "landmarks": [
+ "note": "What to build from the landmark lidar file. Positions, roof shapes and heights come from lidar; everything listed under each landmark here is an estimate read from photos unless marked otherwise.",
+ "landmarks": [
+  {
+   "id": "timberline-lodge",
+   "name": "Timberline Lodge",
+   "patch": "timberline-lodge",
+   "baseTop": 1815.2,
+   "floorHeight": 2.95,
+   "windows": {
+    "pitch": 2.7,
+    "w": 1.2,
+    "h": 1.6,
+    "sill": 0.8
+   },
+   "materials": {
+    "base": "rubble-stone",
+    "siding": "clapboard-grey",
+    "roof": "cedar-shake",
+    "trim": "#d9dad6"
+   },
+   "extras": [
     {
-      "id": "timberline-lodge", "name": "Timberline Lodge", "patch": "timberline-lodge",
-      "baseTop": 1815.2, "floorHeight": 2.95,
-      "windows": { "pitch": 2.7, "w": 1.2, "h": 1.6, "sill": 0.8 },
-      "materials": { "base": "rubble-stone", "siding": "clapboard-grey", "roof": "cedar-shake", "trim": "#d9dad6" },
-      "extras": [
-        { "type": "hex-chimney", "x": 75.6, "y": 21.6, "radius": 2.15, "top": 1839.71, "bottom": 1826.0, "note": "Position and top from lidar; 14 ft diameter from Wikipedia." },
-        { "type": "weathervane", "x": 75.6, "y": 21.6, "base": 1839.71, "height": 2.4, "note": "Bronze snow goose; size estimated from photos." }
-      ]
+     "type": "hex-chimney",
+     "x": 75.6,
+     "y": 21.6,
+     "radius": 2.15,
+     "top": 1839.71,
+     "bottom": 1826.0,
+     "note": "Position and top from lidar; 14 ft diameter from Wikipedia."
+    },
+    {
+     "type": "weathervane",
+     "x": 75.6,
+     "y": 21.6,
+     "base": 1839.71,
+     "height": 2.4,
+     "note": "Bronze snow goose; size estimated from photos."
     }
-  ]
+   ],
+   "roofGrid": 0.4,
+   "roof": [
+    {
+     "type": "gable",
+     "a": [
+      18.85,
+      34.79
+     ],
+     "b": [
+      69.3,
+      22.18
+     ],
+     "offset": 0.6,
+     "ridge": 1830.1,
+     "slope": 1.3,
+     "half": 6.3,
+     "hipA": 1.1,
+     "hipLen": 4.0,
+     "note": "West wing. Ridge height, pitch and width fitted to lidar cross-sections."
+    },
+    {
+     "type": "gable",
+     "a": [
+      78.8,
+      24.8
+     ],
+     "b": [
+      96.5,
+      42.5
+     ],
+     "offset": 0.0,
+     "ridge": 1828.8,
+     "slope": 1.25,
+     "half": 6.3,
+     "note": "East wing. Fitted to lidar."
+    },
+    {
+     "type": "gable",
+     "a": [
+      97.78,
+      38.62
+     ],
+     "b": [
+      109.9,
+      31.6
+     ],
+     "offset": 0.0,
+     "ridge": 1825.9,
+     "slope": 1.2,
+     "half": 6.0,
+     "note": "First part of the 1975 addition. Fitted to lidar; the rest of the addition uses the lidar surface directly."
+    },
+    {
+     "type": "hex",
+     "c": [
+      75.6,
+      21.6
+     ],
+     "apothem": 12.5,
+     "apex": 1835.0,
+     "slope": 0.82,
+     "rot": 90,
+     "note": "Head house roof. Apex position from the chimney's lidar peak; pitch and extent fitted to lidar; which way the six faces point is estimated."
+    }
+   ]
+  }
+ ]
 }

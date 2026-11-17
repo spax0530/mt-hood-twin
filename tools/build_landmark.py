@@ -57,7 +57,7 @@ def build(D, spec):
         w, d = (np.ptp(c[:, 1]) + 1) * st, (np.ptp(c[:, 0]) + 1) * st
         k = int(np.bincount(lab[c[:, 0], c[:, 1]]).argmax())
         if rise >= 2.3 and area < 7: chimneys.append(dict(x=cx, y=cy, w=float(np.clip(w, 1.0, 2.2)), d=float(np.clip(d, 1.0, 2.2)), top=top, plane=k))
-        elif 0.9 <= rise < 2.3 and area >= 1.4 and math.hypot(*planes[k][:2]) > 0.5: dormers.append(dict(x=cx, y=cy, w=float(np.clip(max(w, d), 1.5, 2.6)), top=top, plane=k))
+        elif 0.9 <= rise < 2.3 and area >= 1.4: dormers.append(dict(x=cx, y=cy, w=float(np.clip(max(w, d), 1.5, 2.6)), top=top))
     for c in clusters((diff < -1.2) & R['mask'] & (lab >= 0)): 
         if len(c) * st * st >= 4: lab[c[:, 0], c[:, 1]] = -1
     cent = {k: (float(I[lab == k].mean() * st), float(J[lab == k].mean() * st)) for k in range(len(planes)) if (lab == k).any()}
@@ -75,8 +75,8 @@ def build(D, spec):
                     dd = dj * dj + di * di
                     if best is None or dd < best[0]: best = (dd, nj, ni)
         return best
-    def H(x, y):
-        """Roof height: the fitted plane where it agrees with the lidar, the lidar itself where it does not."""
+    def HL(x, y):
+        """Roof height from lidar alone: the fitted plane where it agrees with the lidar, the lidar itself where it does not."""
         i = int(min(max(round(x / st), 0), nx - 1)); j = int(min(max(round(y / st), 0), ny - 1))
         if not core[j, i]:
             # at the eaves the lidar mixes roof and ground, so continue the roof outward from just inside
@@ -89,6 +89,56 @@ def build(D, spec):
         if l < 0: return r
         a = pz(l, x, y); d = abs(a - r); w = min(1.0, max(0.0, (d - 0.3) / 0.4)); w = w * w * (3 - 2 * w)
         return float(a * (1 - w) + r * w)
+
+    # ---- optional hand-fitted main roof shapes (ridge lines, heights and pitches read off the lidar)
+    prims = spec.get('roof', [])
+    def Hprim(x, y):
+        best = None
+        for q in prims:
+            if q['type'] == 'gable':
+                ax, ay = q['a']; bx, by = q['b']; L = math.hypot(bx - ax, by - ay); dx, dy = (bx - ax) / L, (by - ay) / L
+                t = (x - ax) * dx + (y - ay) * dy; o = -(x - ax) * dy + (y - ay) * dx - q.get('offset', 0.0)
+                if t < -0.7 or t > L + 0.7 or abs(o) > q['half'] + 0.9: continue
+                z = q['ridge'] - q['slope'] * abs(o)
+                if 'hipA' in q: z = min(z, q['ridge'] - q['hipA'] * max(0.0, q.get('hipLen', 4.0) - t))
+                if 'hipB' in q: z = min(z, q['ridge'] - q['hipB'] * max(0.0, t - (L - q.get('hipLen', 4.0))))
+            else:  # hexagonal pyramid
+                cx, cy = q['c']; dist = max((x - cx) * math.cos(math.radians(q.get('rot', 90) + 60 * k)) + (y - cy) * math.sin(math.radians(q.get('rot', 90) + 60 * k)) for k in range(6))
+                if dist > q['apothem']: continue
+                z = q['apex'] - q['slope'] * dist
+            if best is None or z > best: best = z
+        return best
+    suppress = np.zeros((ny, nx), bool)
+    if prims:
+        Pg = np.full((ny, nx), np.nan)
+        for j in range(ny):
+            for i in range(nx):
+                if core[j, i]:
+                    v = Hprim(i * st, j * st)
+                    if v is not None: Pg[j, i] = v
+        dP = np.where(np.isnan(Pg), 0.0, hs - Pg); chimneys = []; dormers = []
+        for c in clusters(dP > 0.8):
+            area = len(c) * st * st; rise = float(dP[c[:, 0], c[:, 1]].max()); cx, cy = float(c[:, 1].mean() * st), float(c[:, 0].mean() * st); top = float(h[c[:, 0], c[:, 1]].max())
+            w, d = (np.ptp(c[:, 1]) + 1) * st, (np.ptp(c[:, 0]) + 1) * st
+            if any(math.hypot(cx - e['x'], cy - e['y']) < e.get('radius', 0) + 1.5 for e in spec.get('extras', [])): continue
+            if rise >= 2.3 and area < 8:
+                chimneys.append(dict(x=cx, y=cy, w=float(np.clip(w, 1.0, 2.2)), d=float(np.clip(d, 1.0, 2.2)), top=top)); suppress[c[:, 0], c[:, 1]] = True
+            elif 0.9 <= rise < 2.6 and 1.4 <= area < 10:
+                dormers.append(dict(x=cx, y=cy, w=float(np.clip(max(w, d) * 0.8, 1.5, 2.6)), top=top)); suppress[c[:, 0], c[:, 1]] = True
+        k3 = suppress.copy(); k3[1:] |= suppress[:-1]; k3[:-1] |= suppress[1:]; k3[:, 1:] |= suppress[:, :-1]; k3[:, :-1] |= suppress[:, 1:]; suppress = k3
+    def H(x, y):
+        """Final roof height: the clean fitted shape, giving way to the lidar wherever the real roof departs from it."""
+        P = Hprim(x, y) if prims else None
+        if P is None: return HL(x, y)
+        i = int(min(max(round(x / st), 0), nx - 1)); j = int(min(max(round(y / st), 0), ny - 1))
+        if suppress[j, i] or not core[j, i]: return float(P)
+        Lz = float(raw(x, y)); d = abs(Lz - P); w = min(1.0, max(0.0, (d - 0.7) / 0.6)); w = w * w * (3 - 2 * w)
+        return float(P * (1 - w) + Lz * w)
+    def roof_under(x, y):
+        P = Hprim(x, y) if prims else None
+        return float(P) if P is not None else HL(x, y)
+    def grad(x, y):
+        e = 0.6; return ((roof_under(x + e, y) - roof_under(x - e, y)) / (2 * e), (roof_under(x, y + e) - roof_under(x, y - e)) / (2 * e))
 
     poly = Polygon(R['poly'])
     if not poly.is_valid: poly = poly.buffer(0)
@@ -166,8 +216,10 @@ def build(D, spec):
 
     # ---- dormers (positions and heights from lidar; shape is a standard gabled dormer)
     for dm in dormers:
-        a, b, _ = planes[dm['plane']]; gmag = math.hypot(a, b); f = np.array([-a, -b]) / gmag; sdir = np.array([-f[1], f[0]]); c = np.array([dm['x'], dm['y']]); top = dm['top']; w = dm['w']
-        zc = pz(dm['plane'], *c); eave_z = top - 0.6; front = c + f * 0.7; zf = pz(dm['plane'], *front)
+        ga, gb = grad(dm['x'], dm['y']); gmag = math.hypot(ga, gb)
+        if gmag < 0.45: continue
+        f = np.array([-ga, -gb]) / gmag; sdir = np.array([-f[1], f[0]]); c = np.array([dm['x'], dm['y']]); top = dm['top']; w = dm['w']
+        zc = roof_under(*c); eave_z = top - 0.6; front = c + f * 0.7; zf = roof_under(*front)
         if eave_z - zf < 0.8: continue
         t_r = (top - zc) / gmag; t_e = (eave_z - zc) / gmag; hw = w / 2
         fl, fr = front - sdir * hw, front + sdir * hw
@@ -183,7 +235,7 @@ def build(D, spec):
         wh2 = min(1.1, eave_z - zf - 0.25)
         if wh2 > 0.5: windows.append([round(float(front[0]), 2), round(float(front[1]), 2), round(float(eave_z - wh2 - 0.08), 2), round(min(w - 0.5, 1.2), 2), round(wh2, 2), round(float(f[0]), 3), round(float(f[1]), 3)])
 
-    chim = [dict(x=round(c['x'], 2), y=round(c['y'], 2), w=round(c['w'], 2), d=round(c['d'], 2), top=round(c['top'], 2), bottom=round(H(c['x'], c['y']) - 1.0, 2)) for c in chimneys]
+    chim = [dict(x=round(c['x'], 2), y=round(c['y'], 2), w=round(c['w'], 2), d=round(c['d'], 2), top=round(c['top'], 2), bottom=round(roof_under(c['x'], c['y']) - 1.5, 2)) for c in chimneys]
     return dict(
         id=spec['id'], name=spec['name'], osmId=p['osmId'],
         frame=dict(x0=p['x0'], y1=p['y1'], mlon=p['mlon'], mlat=p['mlat']),
