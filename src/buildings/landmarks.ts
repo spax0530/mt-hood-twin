@@ -23,14 +23,14 @@ export interface LandmarkData {
 }
 
 const SIDING: Record<string, { kind: SurfaceKind; color: number }> = {
-  'clapboard-grey': { kind: 'clapboard', color: 0xa3a9a8 },
+  'clapboard-grey': { kind: 'clapboard', color: 0x8f9695 },
   'clapboard-tan': { kind: 'clapboard', color: 0xb5a58c },
   'board-batten-grey': { kind: 'board-batten', color: 0xa9aeac },
   'board-batten-brown': { kind: 'board-batten', color: 0x6a5140 },
   'metal-grey': { kind: 'metal-roof', color: 0xa7abaa },
 };
 const ROOF: Record<string, { kind: SurfaceKind; color: number; metalness: number; roughness: number }> = {
-  'cedar-shake': { kind: 'shake', color: 0x6b6156, metalness: 0, roughness: 0.9 },
+  'cedar-shake': { kind: 'shake', color: 0x5a5148, metalness: 0, roughness: 0.9 },
   'metal-grey': { kind: 'metal-roof', color: 0x7d8284, metalness: 0.6, roughness: 0.45 },
   'metal-green': { kind: 'metal-roof', color: 0x3f5a4a, metalness: 0.5, roughness: 0.5 },
 };
@@ -92,7 +92,7 @@ function buildLandmark(d: LandmarkData, shared: SharedUniforms): THREE.Group {
   const roofMat = surface(shared, { kind: roofSpec.kind, color: col(mt.roofColor, roofSpec.color), metalness: roofSpec.metalness, roughness: roofSpec.roughness, snow: 1, side: THREE.DoubleSide });
   const sidingMat = surface(shared, { kind: sideSpec.kind, color: col(mt.sidingColor, sideSpec.color), roughness: 0.8, side: THREE.DoubleSide });
   const baseMat = surface(shared, { kind: baseSpec.kind, color: col(mt.baseColor, baseSpec.color), roughness: 0.92, side: THREE.DoubleSide });
-  const trimMat = surface(shared, { color: col(mt.trim, 0xd4d6d2), roughness: 0.7 });
+  const trimMat = surface(shared, { color: col(mt.trim, 0xb9bcb8), roughness: 0.7 });
   const glassMat = surface(shared, { color: 0x10161d, roughness: 0.06, metalness: 0.0, envMapIntensity: 2.2 });
 
   add(toGeo(d.roof), roofMat);

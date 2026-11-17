@@ -98,7 +98,7 @@ def build(D, spec):
             if q['type'] == 'gable':
                 ax, ay = q['a']; bx, by = q['b']; L = math.hypot(bx - ax, by - ay); dx, dy = (bx - ax) / L, (by - ay) / L
                 t = (x - ax) * dx + (y - ay) * dy; o = -(x - ax) * dy + (y - ay) * dx - q.get('offset', 0.0)
-                if t < -0.7 or t > L + 0.7 or abs(o) > q['half'] + 0.9: continue
+                if t < -1.2 or t > L + 1.2 or abs(o) > q['half'] + 2.5: continue
                 z = q['ridge'] - q['slope'] * abs(o)
                 if 'hipA' in q: z = min(z, q['ridge'] - q['hipA'] * max(0.0, q.get('hipLen', 4.0) - t))
                 if 'hipB' in q: z = min(z, q['ridge'] - q['hipB'] * max(0.0, t - (L - q.get('hipLen', 4.0))))
@@ -106,6 +106,7 @@ def build(D, spec):
                 cx, cy = q['c']; dist = max((x - cx) * math.cos(math.radians(q.get('rot', 90) + 60 * k)) + (y - cy) * math.sin(math.radians(q.get('rot', 90) + 60 * k)) for k in range(6))
                 if dist > q['apothem']: continue
                 z = q['apex'] - q['slope'] * dist
+                if 'kneeDist' in q: z = max(z, q['kneeZ'] - q['kneeSlope'] * (dist - q['kneeDist']))  # flared lower skirt
             if best is None or z > best: best = z
         return best
     suppress = np.zeros((ny, nx), bool)

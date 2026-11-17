@@ -80,8 +80,9 @@ float sSnow = 0.0;`,
   #endif
   diffuseColor.rgb *= shade * tint;
   if (uSnowAmt > 0.0) {
-    float hold = gN.y + (sF(vWPos.xz * 0.45) - 0.5) * 0.55 + (sN(vWPos.xz * 2.7) - 0.5) * 0.12;
-    sSnow = uSnowAmt * smoothstep(0.62, 0.80, hold);
+    // Snow stays on gentle pitches and slides off steep ones, clinging in a few patches
+    float hold = gN.y + (sF(vWPos.xz * 0.22) - 0.5) * 0.34 + (sN(vWPos.xz * 1.9) - 0.5) * 0.06;
+    sSnow = uSnowAmt * smoothstep(0.735, 0.775, hold);
     diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.90, 0.93, 0.97), sSnow);
   }
 }`,

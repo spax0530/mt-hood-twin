@@ -17,23 +17,23 @@
     "base": "rubble-stone",
     "siding": "clapboard-grey",
     "roof": "cedar-shake",
-    "trim": "#d9dad6"
+    "trim": "#b9bcb8"
    },
    "extras": [
     {
      "type": "hex-chimney",
-     "x": 75.6,
-     "y": 21.6,
+     "x": 75.5,
+     "y": 21.5,
      "radius": 2.15,
-     "top": 1839.71,
-     "bottom": 1826.0,
+     "top": 1839.61,
+     "bottom": 1830.0,
      "note": "Position and top from lidar; 14 ft diameter from Wikipedia."
     },
     {
      "type": "weathervane",
-     "x": 75.6,
-     "y": 21.6,
-     "base": 1839.71,
+     "x": 75.5,
+     "y": 21.5,
+     "base": 1839.61,
      "height": 2.4,
      "note": "Bronze snow goose; size estimated from photos."
     }
@@ -93,14 +93,17 @@
     {
      "type": "hex",
      "c": [
-      75.6,
-      21.6
+      75.5,
+      21.5
      ],
-     "apothem": 12.5,
-     "apex": 1835.0,
-     "slope": 0.82,
+     "apothem": 13.5,
+     "apex": 1837.1,
+     "slope": 1.2,
+     "kneeDist": 9.5,
+     "kneeZ": 1825.7,
+     "kneeSlope": 0.5,
      "rot": 90,
-     "note": "Head house roof. Apex position from the chimney's lidar peak; pitch and extent fitted to lidar; which way the six faces point is estimated."
+     "note": "Head house roof: steep upper slope and flared lower skirt, both fitted to lidar profiles taken in twelve directions from the chimney. Which way the six faces point is estimated."
     }
    ]
   }
