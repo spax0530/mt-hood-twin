@@ -1,0 +1,494 @@
+{
+ "note": "Per-lift records. Every property is tagged verified, estimated or unknown. See references/README.md for the photos behind the estimates.",
+ "sources": {
+  "rm": "https://www.remontees-mecaniques.net/bdd/reportage-4231.html",
+  "wiki": "https://en.wikipedia.org/wiki/Magic_Mile",
+  "liftblog": "https://liftblog.com/magic-mile-timberline-lodge-or",
+  "liftblog-comments": "https://liftblog.com/magic-mile-timberline-lodge-or (reader comments)",
+  "sign": "Photo of the information sign in the bottom station: http://rodoaf.remontees-mecaniques.net/usa/timberline/tsd4mag/ok%20(11).JPG",
+  "osm": "OpenStreetMap way 5282193",
+  "lidar": "Oregon DOGAMI lidar canopy height model; USGS 3DEP elevation"
+ },
+ "lifts": [
+  {
+   "id": "magic-mile",
+   "name": "Magic Mile",
+   "resort": "timberline",
+   "osmWayId": 5282193,
+   "model": "poma-detachable-quad-1992",
+   "props": {
+    "manufacturer": {
+     "value": "Poma of America",
+     "status": "verified",
+     "sources": [
+      "rm",
+      "wiki"
+     ]
+    },
+    "yearBuilt": {
+     "value": 1992,
+     "status": "verified",
+     "sources": [
+      "rm",
+      "wiki"
+     ]
+    },
+    "type": {
+     "value": "Detachable quad chairlift",
+     "status": "verified",
+     "sources": [
+      "rm",
+      "wiki",
+      "osm"
+     ]
+    },
+    "gripType": {
+     "value": "Poma TB",
+     "status": "verified",
+     "sources": [
+      "rm"
+     ],
+     "note": "Single source."
+    },
+    "slopeLengthM": {
+     "value": 1652,
+     "status": "verified",
+     "sources": [
+      "sign"
+     ],
+     "note": "5,420 ft on the lift's own sign. Other sources: 1,676 m (rm), 5,500 ft (wiki)."
+    },
+    "verticalRiseM": {
+     "value": 329,
+     "status": "verified",
+     "sources": [
+      "sign",
+      "rm"
+     ],
+     "note": "1,080 ft on the sign; 328 m (rm)."
+    },
+    "bottomElevationFt": {
+     "value": 5935,
+     "status": "verified",
+     "sources": [
+      "sign"
+     ]
+    },
+    "topElevationFt": {
+     "value": 7014,
+     "status": "verified",
+     "sources": [
+      "sign"
+     ]
+    },
+    "towerCount": {
+     "value": 21,
+     "status": "verified",
+     "sources": [
+      "rm"
+     ],
+     "note": "Single source for the count; 18 are mapped in OpenStreetMap and all 21 line up with lidar returns."
+    },
+    "designSpeedMps": {
+     "value": 5.5,
+     "status": "verified",
+     "sources": [
+      "rm"
+     ],
+     "note": "Single source."
+    },
+    "operatingSpeedMps": {
+     "value": 5.0,
+     "status": "estimated",
+     "how": "Highest speed reported by a rider reading the lift display (990 ft/min, 2016). Slower speeds of 715 to 850 ft/min are reported in summer.",
+     "sources": [
+      "liftblog-comments",
+      "wiki"
+     ]
+    },
+    "designCapacityPph": {
+     "value": 3000,
+     "status": "verified",
+     "sources": [
+      "rm",
+      "wiki"
+     ]
+    },
+    "operatedCapacityPph": {
+     "value": 1600,
+     "status": "verified",
+     "sources": [
+      "wiki",
+      "liftblog-comments"
+     ]
+    },
+    "driveStation": {
+     "value": "top",
+     "status": "verified",
+     "sources": [
+      "rm"
+     ],
+     "note": "Single source."
+    },
+    "tensionStation": {
+     "value": "bottom, hydraulic",
+     "status": "verified",
+     "sources": [
+      "rm"
+     ],
+     "note": "Single source."
+    },
+    "chairStorage": {
+     "value": "Chairs can be taken off the line and parked in the building beside the bottom station when storms are expected.",
+     "status": "verified",
+     "sources": [
+      "wiki",
+      "liftblog"
+     ]
+    },
+    "uphillSide": {
+     "value": "right when looking uphill (east side)",
+     "status": "estimated",
+     "how": "Read from two photos: riders going up pass to the right of tower 6 (liftblog img_7249); the loading bay is on the east side of the bottom station (liftblog img_7464).",
+     "sources": [
+      "liftblog"
+     ]
+    },
+    "chairSpacingM": {
+     "value": 45,
+     "status": "estimated",
+     "how": "Derived: 4 seats / (1,600 riders per hour) x 5.0 m/s. Riders describe the spacing as wide."
+    },
+    "carrierCount": {
+     "value": 73,
+     "status": "estimated",
+     "how": "Derived from the loop length and the estimated spacing. Chair numbers 53 and (probably) 74 are visible in photos.",
+     "sources": [
+      "rm"
+     ]
+    },
+    "lineGaugeM": {
+     "value": 5.3,
+     "status": "estimated",
+     "how": "Typical for a Poma detachable quad of this era; lidar returns from the tower heads spread about 3 m either side of the centre line."
+    },
+    "ropeDiameterMm": {
+     "value": 42,
+     "status": "estimated",
+     "how": "Typical for a detachable quad of this length. Not documented."
+    },
+    "stationSpeedMps": {
+     "value": 1.0,
+     "status": "estimated",
+     "how": "Typical detachable loading speed. Not documented."
+    },
+    "chairDimensions": {
+     "value": {
+      "seatWidthM": 2.2,
+      "ropeToSeatM": 2.98,
+      "crossbarWidthM": 1.7
+     },
+     "status": "estimated",
+     "how": "Scaled from photo rm-46 assuming a 2.2 m four-person seat.",
+     "sources": [
+      "rm"
+     ]
+    },
+    "towerHeadAboveRopeM": {
+     "value": 1.85,
+     "status": "estimated",
+     "how": "Height of the lifting frame above the rope, scaled from photos rm-25 and liftblog img_7249.",
+     "sources": [
+      "rm",
+      "liftblog"
+     ]
+    },
+    "colors": {
+     "value": {
+      "towers": "light grey paint",
+      "towerBasePads": "yellow",
+      "chairFrame": "galvanized steel",
+      "seat": "black",
+      "stations": "light grey siding"
+     },
+     "status": "estimated",
+     "how": "From photos.",
+     "sources": [
+      "rm",
+      "liftblog"
+     ]
+    },
+    "restraintBar": {
+     "value": "Lap bar without footrests",
+     "status": "estimated",
+     "how": "From photo rm-46.",
+     "sources": [
+      "rm"
+     ]
+    },
+    "stationInteriors": {
+     "value": null,
+     "status": "unknown",
+     "note": "Bullwheels, contours and loading areas are not modeled yet."
+    },
+    "towerSheaveCounts": {
+     "value": null,
+     "status": "unknown",
+     "note": "Only a few towers are documented (4S2C/4S2C, 6S/4S, 6S/6S in rm captions). Counts are currently derived from the rope angle at each tower."
+    }
+   },
+   "line": {
+    "path": [
+     -121.713564,
+     45.33096,
+     -121.713513,
+     45.331403,
+     -121.713475,
+     45.331733,
+     -121.713413,
+     45.332274,
+     -121.713354,
+     45.332781,
+     -121.713283,
+     45.3334,
+     -121.713237,
+     45.3338,
+     -121.713153,
+     45.334525,
+     -121.712955,
+     45.336247,
+     -121.712896,
+     45.336756,
+     -121.712787,
+     45.337708,
+     -121.712597,
+     45.339354,
+     -121.712482,
+     45.340348,
+     -121.712369,
+     45.34133,
+     -121.712261,
+     45.342272,
+     -121.712151,
+     45.343229,
+     -121.712047,
+     45.344132,
+     -121.711943,
+     45.345028,
+     -121.711936,
+     45.34509,
+     -121.711898,
+     45.34543
+    ],
+    "note": "Centre line from OpenStreetMap way 5282193. s is horizontal distance in meters along this line from its first point.",
+    "bottom": {
+     "bullwheelS": -10,
+     "portalS": 11,
+     "ground": 1804.1,
+     "ropeAboveGround": 4.0,
+     "buildingS": [
+      -20,
+      11
+     ],
+     "status": "estimated",
+     "note": "Building extent from lidar. Rope height and bullwheel position inside are estimates."
+    },
+    "top": {
+     "bullwheelS": 1611,
+     "portalS": 1594,
+     "ground": 2131.6,
+     "ropeAboveGround": 4.2,
+     "buildingS": [
+      1594,
+      1619
+     ],
+     "status": "estimated",
+     "note": "Building extent from lidar. Rope height and bullwheel position inside are estimates."
+    }
+   },
+   "towers": [
+    {
+     "n": 1,
+     "s": 16,
+     "ground": 1803.0,
+     "top": 5.7,
+     "inOsm": false,
+     "status": "estimated",
+     "note": "Station exit tower. Position and height from a low lidar return (5.7 m) just outside the building; not in OpenStreetMap. Counted as tower 1 to match the 21 towers reported by remontees-mecaniques.net."
+    },
+    {
+     "n": 2,
+     "s": 48,
+     "ground": 1807.8,
+     "top": 11.0,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 3,
+     "s": 85,
+     "ground": 1817.3,
+     "top": 14.1,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 4,
+     "s": 144,
+     "ground": 1830.0,
+     "top": 14.4,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 5,
+     "s": 204,
+     "ground": 1845.2,
+     "top": 15.8,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 6,
+     "s": 271,
+     "ground": 1857.5,
+     "top": 15.6,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 7,
+     "s": 316,
+     "ground": 1863.8,
+     "top": 13.3,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 8,
+     "s": 398,
+     "ground": 1876.3,
+     "top": 12.8,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 9,
+     "s": 493,
+     "ground": 1890.1,
+     "top": 12.1,
+     "inOsm": false,
+     "status": "estimated",
+     "note": "Not in OpenStreetMap. Placed from a lidar peak on the lift line that fits the regular ~100 m tower spacing. Could in principle be a chair caught by the lidar."
+    },
+    {
+     "n": 10,
+     "s": 591,
+     "ground": 1902.5,
+     "top": 12.7,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 11,
+     "s": 646,
+     "ground": 1910.8,
+     "top": 14.2,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 12,
+     "s": 749,
+     "ground": 1927.3,
+     "top": 17.3,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 13,
+     "s": 830,
+     "ground": 1948.7,
+     "top": 16.4,
+     "inOsm": false,
+     "status": "estimated",
+     "note": "Not in OpenStreetMap. Placed from a lidar peak on the lift line that fits the regular ~100 m tower spacing. Could in principle be a chair caught by the lidar."
+    },
+    {
+     "n": 14,
+     "s": 935,
+     "ground": 1973.2,
+     "top": 15.3,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 15,
+     "s": 1044,
+     "ground": 1997.0,
+     "top": 15.1,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 16,
+     "s": 1155,
+     "ground": 2027.0,
+     "top": 14.0,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 17,
+     "s": 1260,
+     "ground": 2046.3,
+     "top": 12.0,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 18,
+     "s": 1366,
+     "ground": 2070.4,
+     "top": 17.6,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 19,
+     "s": 1468,
+     "ground": 2096.7,
+     "top": 16.3,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 20,
+     "s": 1568,
+     "ground": 2122.7,
+     "top": 14.7,
+     "inOsm": true,
+     "status": "verified"
+    },
+    {
+     "n": 21,
+     "s": 1574,
+     "ground": 2124.2,
+     "top": 14.7,
+     "inOsm": true,
+     "status": "verified"
+    }
+   ],
+   "towerNote": "s and top come from the Oregon DOGAMI lidar canopy height model sampled every 1 m along the line (top = highest return, about +/-1 m). ground comes from USGS 3DEP. Towers marked verified are also mapped in OpenStreetMap within 3 m.",
+   "knownMismatches": [
+    "Stations are still the plain lidar building shells: no open bays, bullwheels, loading area, deck or signs.",
+    "Chair parking building beside the bottom station has no rails or doors.",
+    "Tower sheave counts are derived, not documented, for most towers.",
+    "No tower numbers, chair numbers, ladders cages, wind gauges or catwalks.",
+    "No shadows from chairs or towers yet.",
+    "Towers are modeled vertical; the real ones lean slightly.",
+    "Rope sag is a parabola with an assumed tension, not surveyed."
+   ]
+  }
+ ]
+}

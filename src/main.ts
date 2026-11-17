@@ -9,6 +9,7 @@ import { loadMapData } from './data';
 import { RunPainter } from './resorts/runs';
 import { buildBuildings } from './buildings/buildings';
 import { toLocal } from './geo';
+import { LiftSystem, type LiftRecord } from './lifts/lift';
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -16,8 +17,9 @@ renderer.toneMappingExposure = 0.42;
 document.body.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(50, 1, 2, 1_000_000);
+const camera = new THREE.PerspectiveCamera(50, 1, 0.5, 1_000_000);
 const env = new Environment(scene);
+env.attach(renderer, scene);
 
 let quality = QUALITY[initialQuality];
 const terrain = new Terrain(env.uniforms, quality, renderer.capabilities.getMaxAnisotropy());
@@ -43,6 +45,7 @@ const hud = new Hud(places, initialQuality, env.hour, {
     if (what === 'runs') env.uniforms.uRuns.value = on ? 1 : 0;
     if (what === 'labels' && labels) labels.enabled = on;
     if (what === 'buildings' && buildings) buildings.visible = on;
+    if (what === 'lifts' && lifts) lifts.group.visible = on;
   },
 });
 const startId = new URLSearchParams(location.search).get('at') ?? 'mountain';
@@ -53,6 +56,14 @@ rig.jumpTo(start);
 // Resorts, runs, lifts and buildings (Phase 2 data)
 let labels: Labels | null = null;
 let buildings: THREE.Mesh | null = null;
+let lifts: LiftSystem | null = null;
+try {
+  const doc = (await (await fetch('./data/lifts.json')).json()) as { lifts: LiftRecord[] };
+  lifts = new LiftSystem(doc.lifts, env.uniforms);
+  scene.add(lifts.group);
+} catch (e) {
+  console.warn('Lift data failed to load', e);
+}
 const map = await loadMapData();
 const resorts = (await (await fetch('./data/resorts.json')).json().catch(() => ({ resorts: [] }))) as {
   resorts: { name: string; lat: number; lon: number }[];
@@ -86,12 +97,14 @@ if (map) {
   labels = new Labels(document.getElementById('labels')!, items, terrain);
 }
 
+const timeScale = Number(new URLSearchParams(location.search).get('speed') ?? 1) || 1;
 const clock = new THREE.Clock();
 let frame = 0;
 renderer.setAnimationLoop(() => {
   const dt = Math.min(clock.getDelta(), 0.1);
   rig.update(dt);
   terrain.update(camera.position);
+  lifts?.update(dt * timeScale);
   renderer.render(scene, camera);
   hud.setHeading(rig.heading());
 
@@ -114,4 +127,4 @@ renderer.setAnimationLoop(() => {
 });
 
 // Handy for debugging and automated checks
-Object.assign(window, { hood: { terrain, camera, rig, env, map } });
+Object.assign(window, { hood: { terrain, camera, rig, env, map, lifts, scene, renderer } });

@@ -19,7 +19,7 @@ export class CameraRig {
     this.controls = new OrbitControls(camera, dom);
     this.controls.enableDamping = true;
     this.controls.dampingFactor = 0.08;
-    this.controls.minDistance = 20;
+    this.controls.minDistance = 2;
     this.controls.maxDistance = 60000;
     this.controls.maxPolarAngle = Math.PI * 0.497;
     this.controls.screenSpacePanning = false;

@@ -11,7 +11,7 @@ export interface HudHandlers {
   onQuality(q: QualityName): void;
   onHour(h: number): void;
   onNorth(): void;
-  onToggle(what: 'runs' | 'labels' | 'buildings', on: boolean): void;
+  onToggle(what: 'runs' | 'labels' | 'buildings' | 'lifts', on: boolean): void;
 }
 
 export class Hud {
@@ -33,7 +33,7 @@ export class Hud {
     t.value = String(hour); label();
     t.oninput = () => { h.onHour(Number(t.value)); label(); };
     $('compass').onclick = () => h.onNorth();
-    for (const what of ['runs', 'labels', 'buildings'] as const) {
+    for (const what of ['runs', 'labels', 'buildings', 'lifts'] as const) {
       const box = $<HTMLInputElement>(`show-${what}`);
       box.onchange = () => h.onToggle(what, box.checked);
     }
