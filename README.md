@@ -7,7 +7,7 @@ An interactive 3D model of Mt Hood, Oregon at true 1:1 scale in winter, built to
 | Phase | What | State |
 |---|---|---|
 | 1 | Terrain and winter environment | Live and checked against real data |
-| 2 | Resorts, runs, lodges and buildings | Live: 427 run segments, 1,135 buildings shaped from lidar. Not yet done: hand-detailed landmark buildings, parking lots, 3D trees |
+| 2 | Resorts, runs, lodges and buildings | Live: 427 run segments, 1,135 buildings shaped from lidar. Timberline Lodge has a first detailed model (`tools/build_landmark.py`, `tools/landmarks.json`); other landmarks, parking lots and 3D trees still to do |
 | 3 | Lifts, moving at real speed | Magic Mile pilot live (chairs, towers, rope; stations not yet). Awaiting sign-off before the other lifts. Record: `public/data/lifts.json`, references: `references/README.md` |
 
 ## Run it

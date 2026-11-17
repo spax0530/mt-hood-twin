@@ -39,3 +39,27 @@ Image base: `https://liftblog.com/wp-content/uploads/2015/09/`
 - Close view of a tower base and ladder
 - The number of the highest chair, to fix the carrier count
 - Winter photos of both stations from the lift line
+
+## Timberline Lodge
+
+Measurements: Oregon DOGAMI lidar surface model sampled at 0.5 m over the lodge (roof planes, ridge and eave heights, chimney positions and heights, dormer positions). Footprint from OpenStreetMap.
+
+Source C: Historic American Buildings Survey, HABS ORE,3-GOCA.V,1 (public domain, Library of Congress), on Wikimedia Commons under "Category:Historic American Buildings Survey images of Timberline Lodge". Sheet numbers below are the last part of each file name.
+
+| Ref | Sheet | Shows | Used for |
+|---|---|---|---|
+| habs-4 | 1-4 | South front, whole original lodge from the southeast | Overall massing, dormer rows, stone base |
+| habs-5 | 1-5 | Head house and west wing from the southeast | Head house roof, stonework |
+| habs-6 | 1-6 | Head house south elevation and entrance | Entrance pavilion and stairs (not modeled yet) |
+| habs-18 | 1-18 | East wing south side | Window rhythm, clapboard, chimney, long roof down to the stone |
+
+Still to use from the same survey: west wing (1-20 to 1-24), north side (1-25 to 1-36), east facade and 1975 addition (1-37 to 1-42), roof and weather vane detail (1-7).
+
+Source D: Wikimedia Commons color photos (each under its own free license; credit the author if reused)
+
+| Ref | File | License | Shows | Used for |
+|---|---|---|---|---|
+| wc-2014 | Timberline Lodge 2014.jpg | CC BY 2.0, edward stojakovic | South front panorama, summer | Colors: pale grey siding, weathered shake roof, grey stone |
+| wc-winter06 | Timberlinelodge front winter.jpeg | CC BY-SA 3.0, EncMstr | Front in deep snow | How much snow stays on the roofs |
+| wc-2017 | Timberline Lodge exterior (32563789826).jpg | CC BY 2.0, Doug Letterman | Front in winter with the snow tunnel entrance | Winter entrance tunnel (not modeled yet) |
+| wc-west | West Wing of Timberline Lodge, Mid-March.jpg | CC0, Tim-desser | West wing close up | Window trim, gable detail, chimney stone |

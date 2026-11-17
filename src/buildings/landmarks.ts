@@ -30,7 +30,7 @@ const SIDING: Record<string, { kind: SurfaceKind; color: number }> = {
   'metal-grey': { kind: 'metal-roof', color: 0xa7abaa },
 };
 const ROOF: Record<string, { kind: SurfaceKind; color: number; metalness: number; roughness: number }> = {
-  'cedar-shake': { kind: 'shake', color: 0x5a5148, metalness: 0, roughness: 0.9 },
+  'cedar-shake': { kind: 'shake', color: 0x443d36, metalness: 0, roughness: 0.9 },
   'metal-grey': { kind: 'metal-roof', color: 0x7d8284, metalness: 0.6, roughness: 0.45 },
   'metal-green': { kind: 'metal-roof', color: 0x3f5a4a, metalness: 0.5, roughness: 0.5 },
 };
