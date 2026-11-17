@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mt Hood Digital Twin</title>
+    <style>html,body{background:#9db7d6;height:100%;margin:0;overflow:hidden}body{color:#eef3f8;font:13px/1.4 system-ui,-apple-system,Segoe UI,sans-serif}canvas{touch-action:none;display:block}.panel{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);background:#1018229e;border:1px solid #ffffff24;border-radius:10px;padding:10px 12px;position:fixed}#top{width:232px;top:12px;left:12px}#top h1{letter-spacing:.02em;margin:0 0 8px;font-size:14px}label{color:#c4d0dc;justify-content:space-between;align-items:center;gap:8px;margin-top:6px;display:flex}select,input[type=range]{width:136px}select{color:#eef3f8;font:inherit;background:#1c2a3a;border:1px solid #fff3;border-radius:6px;padding:3px 4px}#read{font-variant-numeric:tabular-nums;bottom:12px;left:12px}#read div{white-space:nowrap}#read{max-width:calc(100vw - 48px)}#read span.k{color:#a9b8c7;width:92px;display:inline-block}#status{color:#ffd98a}#status:empty{display:none}#help{color:#a9b8c7;margin-top:8px;font-size:12px}#compass{text-align:center;cursor:pointer;-webkit-user-select:none;user-select:none;padding:8px 10px 6px;top:12px;right:12px}#compass svg{width:64px;height:64px;display:block}#rose{transform-origin:50%;transform-box:view-box}#bearing{font-variant-numeric:tabular-nums;margin-top:2px;font-size:12px}.checks{color:#c4d0dc;flex-wrap:wrap;gap:2px 10px;margin-top:8px;display:flex}.checks label{justify-content:flex-start;gap:4px;margin:0}#labels{pointer-events:none;position:fixed;inset:0;overflow:hidden}.lbl{white-space:nowrap;color:#fff;will-change:transform;background:#101822b8;border-radius:4px;padding:3px 6px;font-size:11px;line-height:1;position:absolute;top:0;left:0}.lbl.resort{background:#101822d9;padding:5px 9px;font-size:14px;font-weight:700}.lbl.place{background:#3c2c1cd9}.lbl.lift{background:#a01e24e0;font-weight:600}.lbl.run{color:#fff}.lbl.run.easy{background:#22823ee6}.lbl.run.intermediate{background:#1e50c8e6}.lbl.run.advanced,.lbl.run.expert{background:#0c0e10e6}#legend{color:#c4d0dc;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:11px;display:flex}#legend i{vertical-align:middle;border-radius:2px;width:14px;height:4px;margin-right:4px;display:inline-block}#credit{color:#8fa0b2;white-space:normal;max-width:420px;margin-top:4px;font-size:10px}@media (max-width:560px){#help{display:none}#top{width:208px}select,input[type=range]{width:116px}}</style>
+    <script type="module" crossorigin src="./assets/index-0yIySEyy.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/globals-BzgPNLsn.js">
+  </head>
+  <body>
+    <div id="labels"></div>
+    <div id="top" class="panel">
+      <h1>Mt Hood, Oregon &middot; 1:1 scale</h1>
+      <label>Jump to <select id="jump"></select></label>
+      <label>Quality <select id="quality"></select></label>
+      <label><span>Time <span id="hourLabel"></span></span> <input id="hour" type="range" min="7.75" max="16.5" step="0.25" /></label>
+      <div class="checks">
+        <label><input id="show-runs" type="checkbox" checked /> Runs</label>
+        <label><input id="show-labels" type="checkbox" checked /> Labels</label>
+        <label><input id="show-buildings" type="checkbox" checked /> Buildings</label>
+        <label><input id="show-lifts" type="checkbox" checked /> Lifts</label>
+      </div>
+      <div id="legend">
+        <span><i style="background:#2e9e4f"></i>Easiest</span><span><i style="background:#2563eb"></i>More difficult</span>
+        <span><i style="background:#15171a;outline:1px solid #888"></i>Most difficult</span><span><i style="background:repeating-linear-gradient(90deg,#15171a 0 4px,transparent 4px 7px);outline:1px solid #888"></i>Expert</span>
+      </div>
+      <div id="help">Drag to orbit, scroll to zoom, right-drag to pan. WASD or arrow keys to fly, Shift to go faster.</div>
+    </div>
+    <div id="compass" class="panel" title="Click to face north">
+      <svg viewBox="0 0 64 64" aria-label="Compass">
+        <circle cx="32" cy="32" r="29" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" />
+        <g id="rose">
+          <polygon points="32,7 38,32 26,32" fill="#e5484d" />
+          <polygon points="32,57 38,32 26,32" fill="#dfe6ee" />
+          <text x="32" y="22" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">N</text>
+          <g stroke="rgba(255,255,255,0.6)" stroke-width="1.5"><line x1="59" y1="32" x2="54" y2="32" /><line x1="5" y1="32" x2="10" y2="32" /></g>
+        </g>
+      </svg>
+      <div id="bearing"></div>
+    </div>
+    <div id="read" class="panel">
+      <div><span class="k">Camera</span><span id="camElev"></span>, <span id="agl"></span></div>
+      <div><span class="k">Ground detail</span><span id="detail">...</span></div>
+      <div><span class="k">Summit check</span><span id="summit">waiting for data</span></div>
+      <div id="status"></div>
+      <div id="credit">Elevation: USGS 3DEP, Oregon DOGAMI lidar &middot; Imagery: USGS &middot; Runs, lifts, buildings: &copy; OpenStreetMap contributors</div>
+    </div>
+  </body>
+</html>

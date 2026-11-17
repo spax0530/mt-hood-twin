@@ -1,0 +1,14 @@
+{
+  "note": "Ski areas operating on Mt Hood, confirmed November 2026. Coordinates come from OpenStreetMap features (resort boundary centroid or base lift terminal).",
+  "sources": [
+    "https://www.onthesnow.com/mt-hood/projected-openings (lists Timberline Lodge, Mt. Hood Skibowl, Mt. Hood Meadows, Cooper Spur for 2026/27)",
+    "https://www.fs.usda.gov/r06/mthood/recreation/timberline-summit-pass-ski-area (Summit Pass: one chairlift, operated by Timberline)"
+  ],
+  "resorts": [
+    { "id": "timberline", "name": "Timberline", "lat": 45.32325, "lon": -121.71662, "operator": "Timberline Lodge" },
+    { "id": "meadows", "name": "Mt. Hood Meadows", "lat": 45.33552, "lon": -121.66218, "operator": "Mt. Hood Meadows" },
+    { "id": "skibowl", "name": "Mt. Hood Skibowl", "lat": 45.29462, "lon": -121.77121, "operator": "Mt. Hood Skibowl" },
+    { "id": "summitpass", "name": "Summit Pass", "lat": 45.303305, "lon": -121.745891, "operator": "Timberline Lodge" },
+    { "id": "cooperspur", "name": "Cooper Spur", "lat": 45.412159, "lon": -121.605322, "operator": "Cooper Spur Mountain Resort" }
+  ]
+}

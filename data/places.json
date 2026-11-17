@@ -1,0 +1,15 @@
+{
+  "note": "Jump-to locations. Coordinates from OpenStreetMap features; elevations from USGS 3DEP.",
+  "places": [
+    { "id": "mountain", "name": "Whole mountain", "lat": 45.3736, "lon": -121.6958, "elevM": 3429, "viewDist": 22000 },
+    { "id": "summit", "name": "Summit", "lat": 45.3736, "lon": -121.6958, "elevM": 3429, "viewDist": 3500 },
+    { "id": "timberline", "name": "Timberline Lodge", "lat": 45.33113, "lon": -121.711245, "elevM": 1813, "viewDist": 700 },
+    { "id": "magicmile", "name": "Magic Mile lift (tower 6)", "lat": 45.33330, "lon": -121.71320, "elevM": 1856, "viewDist": 70 },
+    { "id": "timberline-area", "name": "Timberline ski area", "lat": 45.32325, "lon": -121.71662, "elevM": 1700, "viewDist": 5000 },
+    { "id": "meadows", "name": "Mt. Hood Meadows", "lat": 45.331736, "lon": -121.665323, "elevM": 1640, "viewDist": 3500 },
+    { "id": "skibowl", "name": "Mt. Hood Skibowl", "lat": 45.29462, "lon": -121.77121, "elevM": 1300, "viewDist": 3500 },
+    { "id": "govcamp", "name": "Government Camp", "lat": 45.304245, "lon": -121.756565, "elevM": 1178, "viewDist": 900 },
+    { "id": "summitpass", "name": "Summit Pass", "lat": 45.303305, "lon": -121.745891, "elevM": 1215, "viewDist": 1500 },
+    { "id": "cooperspur", "name": "Cooper Spur", "lat": 45.412159, "lon": -121.605322, "elevM": 1198, "viewDist": 2000 }
+  ]
+}
