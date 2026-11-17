@@ -36,7 +36,7 @@ function resize() {
 addEventListener('resize', resize);
 resize();
 
-const { places } = (await (await fetch('./data/places.json')).json()) as { places: Place[] };
+const { places } = (await (await fetch(`./data/places.json?v=${__BUILD__}`)).json()) as { places: Place[] };
 const hud = new Hud(places, initialQuality, env.hour, {
   onJump: (p) => rig.jumpTo(p),
   onQuality: (name) => { quality = QUALITY[name]; terrain.setQuality(quality); resize(); },
@@ -60,14 +60,14 @@ let buildings: THREE.Mesh | null = null;
 let landmarks: THREE.Group | null = null;
 let lifts: LiftSystem | null = null;
 try {
-  const doc = (await (await fetch('./data/lifts.json')).json()) as { lifts: LiftRecord[] };
+  const doc = (await (await fetch(`./data/lifts.json?v=${__BUILD__}`)).json()) as { lifts: LiftRecord[] };
   lifts = new LiftSystem(doc.lifts, env.uniforms);
   scene.add(lifts.group);
 } catch (e) {
   console.warn('Lift data failed to load', e);
 }
 const map = await loadMapData();
-const resorts = (await (await fetch('./data/resorts.json')).json().catch(() => ({ resorts: [] }))) as {
+const resorts = (await (await fetch(`./data/resorts.json?v=${__BUILD__}`)).json().catch(() => ({ resorts: [] }))) as {
   resorts: { name: string; lat: number; lon: number }[];
 };
 if (map) {

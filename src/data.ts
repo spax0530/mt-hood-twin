@@ -48,7 +48,7 @@ export interface MapData {
 
 export async function loadMapData(): Promise<MapData | null> {
   try {
-    const res = await fetch('./data/osm.json');
+    const res = await fetch(`./data/osm.json?v=${__BUILD__}`);
     if (res.ok) return (await res.json()) as MapData;
   } catch { /* fall through */ }
   // Preview copy left in this browser by tools/fetch-data.html, used until the file is in the repo

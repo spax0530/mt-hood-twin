@@ -43,11 +43,11 @@ const BASE: Record<string, { kind: SurfaceKind; color: number }> = {
 export async function loadLandmarks(shared: SharedUniforms): Promise<{ group: THREE.Group; osmIds: Set<number> }> {
   const group = new THREE.Group();
   const osmIds = new Set<number>();
-  const index = (await (await fetch('./data/landmarks/index.json')).json()) as { landmarks: { id: string; osmId: number }[] };
+  const index = (await (await fetch(`./data/landmarks/index.json?v=${__BUILD__}`)).json()) as { landmarks: { id: string; osmId: number }[] };
   await Promise.all(
     index.landmarks.map(async (e) => {
       try {
-        const d = (await (await fetch(`./data/landmarks/${e.id}.json`)).json()) as LandmarkData;
+        const d = (await (await fetch(`./data/landmarks/${e.id}.json?v=${__BUILD__}`)).json()) as LandmarkData;
         group.add(buildLandmark(d, shared));
         osmIds.add(d.osmId);
       } catch (err) {
