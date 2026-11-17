@@ -6,8 +6,8 @@ An interactive 3D model of Mt Hood, Oregon at true 1:1 scale in winter, built to
 
 | Phase | What | State |
 |---|---|---|
-| 1 | Terrain and winter environment | Live, first check against real data in progress |
-| 2 | Resorts, runs, lodges and buildings | Not started |
+| 1 | Terrain and winter environment | Live and checked against real data |
+| 2 | Resorts, runs, lodges and buildings | Live: 427 run segments, 1,135 buildings shaped from lidar. Not yet done: hand-detailed landmark buildings, parking lots, 3D trees |
 | 3 | Lifts, moving at real speed | Not started |
 
 ## Run it
@@ -47,7 +47,8 @@ Earth curvature is not modeled. Across the 30 km scene that is a drop of under 2
 ## Known limits right now
 
 - Elevation is 10 m source data across the mountain. On High quality, ground near the camera is requested from the USGS lidar service at up to 0.8 m per sample. The "Ground detail" readout shows which one you are looking at.
-- No buildings yet (Phase 2). The elevation data is bare earth, so towns show as empty ground.
+- Buildings have real footprints and lidar-measured heights and roof shapes, but generic wall colors and no windows or doors yet.
+- Runs come from OpenStreetMap and have not yet been cross-checked against each resort's current trail map.
 - The aerial imagery is from summer. Winter snow, rock and forest are drawn by a shader that uses elevation, steepness and where the imagery shows tree canopy. Forest is a surface texture for now, not individual 3D trees.
 - The terrain does not yet cast shadows onto itself.
 

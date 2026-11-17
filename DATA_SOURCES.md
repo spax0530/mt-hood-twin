@@ -28,9 +28,20 @@ Every dataset and reference used, with license. Updated each phase.
 - Treeline is modeled at about 1,850 m (6,000 ft) with natural variation. To be tuned against winter photos.
 - Winter sun path is approximated for mid-winter at 45.4 N (peak elevation about 22 degrees).
 
-## Provisional
+## Runs, lifts and buildings
 
-- `public/data/places.json` resort entries are approximate base-area points for the jump-to menu only. Phase 2 replaces them with verified data from official resort sources and OpenStreetMap.
+- **OpenStreetMap** (c) OpenStreetMap contributors, Open Database License (ODbL). Fetched 2026-11-17 through the Overpass API (overpass.openstreetmap.fr) for the area 45.20 to 45.52 N, 121.92 to 121.48 W.
+  - `public/data/osm.json`: 427 ski run segments (309 named), 36 lift lines with tower positions, 1,135 building footprints, 74 parking areas, 3 resort boundaries.
+  - Rebuild it with `public/tools/fetch-data.html` (open the page on the live site and press the button).
+  - Not yet cross-checked against the resorts' current trail maps.
+- **Oregon DOGAMI lidar** image services at `https://gis.dogami.oregon.gov/arcgis/rest/services/lidar/` (Oregon Department of Geology and Mineral Industries, public data).
+  - Canopy height model: building heights above ground.
+  - Digital surface model: roof shapes for 209 large, complex or named buildings, sampled at about 1 m.
+  - On small buildings under trees the lidar reads the tree, so heights there are capped to a plausible value for the footprint.
+
+## Resorts
+
+- `public/data/resorts.json` lists the five ski areas confirmed operating, with the sources used.
 
 ## Software
 
